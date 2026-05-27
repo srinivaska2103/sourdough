@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en" x-data="{ darkMode: localStorage.getItem('dark') === 'true', dir: localStorage.getItem('dir') || 'ltr', mobileMenu: false }" :class="{'dark': darkMode}" :dir="dir">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23B45309' stroke-width='2'%3E%3Cpath d='M12 2C8.686 2 6 4.686 6 8c0 1.93.89 3.65 2.29 4.77C7.38 13.9 6.7 15.2 6.7 16.6c0 2.98 2.42 5.4 5.4 5.4s5.4-2.42 5.4-5.4c0-1.4-.68-2.7-1.59-3.83C17.11 11.65 18 9.93 18 8c0-3.314-2.686-6-6-6z'/%3E%3C/svg%3E">
+    <title>Sourdough & Artisan Co.</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } }
+        }
+    </script>
+    <style>[x-cloak] { display: none; }</style>
+    
+    <script>
+    // 1. Check for saved direction preference, fallback to default 'ltr'
+    const savedDir = localStorage.getItem('dir') || 'ltr';
+    
+    // 2. Apply it to the HTML element right away
+    document.documentElement.setAttribute('dir', savedDir);
+</script>
+</head>
+<body class="bg-stone-50 dark:bg-stone-900 text-stone-800 dark:text-stone-100 transition-colors duration-300">
+
+ <nav class="sticky top-0 z-50 bg-white/90 dark:bg-stone-950/90 backdrop-blur-md border-b border-stone-200 dark:border-stone-800"
+     x-data="{ 
+        darkMode: localStorage.getItem('dark') === 'true', 
+        dir: localStorage.getItem('dir') || 'ltr', 
+        mobileMenu: false 
+     }"
+     x-init="$watch('darkMode', value => {
+        if (value) {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('dark', 'true');
+        } else {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('dark', 'false');
+        }
+     })">
+     
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-20 items-center">
+            
+            <!-- Logo & Name (Clickable) -->
+            <a href="index.html" class="flex items-center gap-2 group">
+                <div class="w-8 h-8 bg-amber-700 text-white flex items-center justify-center rounded-lg group-hover:scale-105 transition-transform duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2C8.686 2 6 4.686 6 8c0 1.93.89 3.65 2.29 4.77C7.38 13.9 6.7 15.2 6.7 16.6c0 2.98 2.42 5.4 5.4 5.4s5.4-2.42 5.4-5.4c0-1.4-.68-2.7-1.59-3.83C17.11 11.65 18 9.93 18 8c0-3.314-2.686-6-6-6z"/>
+                    </svg>
+                </div>
+                <span class="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-50 group-hover:text-amber-700 transition-colors">Sourdough</span>
+            </a>
+            
+            <!-- Desktop Nav (Hidden until 1024px) -->
+            <div class="hidden lg:flex space-x-6 items-center font-medium">
+                <template x-for="link in [{n:'Home',u:'index.html'},{n:'Home 2',u:'home2.html'},{n:'About',u:'abouts.html'},{n:'Services',u:'services.html'},{n:'Contact',u:'contact.html'}]">
+                    <a :href="link.u" 
+                       class="transition duration-300"
+                       :class="window.location.pathname.includes(link.u) ? 'text-amber-700 font-bold' : 'hover:text-amber-700 text-stone-600 dark:text-stone-300'"
+                       x-text="link.n">
+                    </a>
+                </template>
+                
+                <div class="flex items-center gap-3 border-l border-stone-300 dark:border-stone-700 pl-6 ml-2">
+                    <!-- Fixed Desktop Theme Toggle -->
+                    <button @click="darkMode = !darkMode" class="p-2 hover:bg-stone-200 dark:hover:bg-stone-700 rounded-full transition focus:outline-none" aria-label="Toggle Theme">
+                        <span x-text="darkMode ? '☀️' : '🌙'"></span>
+                    </button>
+                    
+                  <button id="dir-toggle" 
+        class="text-xs font-bold uppercase p-2 border border-stone-300 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-800 rounded transition focus:outline-none">
+    <span id="dir-text">RTL</span>
+</button>
+<script>
+    // 1. Get references to the button and text elements
+    const dirToggle = document.getElementById('dir-toggle');
+    const dirText = document.getElementById('dir-text');
+
+    // 2. Initialize direction from localStorage, or default to 'ltr'
+    let currentDir = localStorage.getItem('dir') || 'ltr';
+
+    // 3. Function to apply the direction state to the webpage
+    function applyDirection(dir) {
+        // Set the direction attribute on the <html> tag
+        document.documentElement.setAttribute('dir', dir);
+        
+        // Update the button text to show the OPPOSITE layout choice
+        dirText.textContent = dir === 'ltr' ? 'RTL' : 'LTR';
+        
+        // Save the choice for future page visits
+        localStorage.setItem('dir', dir);
+    }
+
+    // 4. Run immediately on page load to apply the saved state
+    applyDirection(currentDir);
+
+    // 5. Add a normal click event listener to the toggle button
+    dirToggle.addEventListener('click', () => {
+        // Switch the value back and forth
+        currentDir = currentDir === 'ltr' ? 'rtl' : 'ltr';
+        
+        // Apply the changes instantly
+        applyDirection(currentDir);
+    });
+</script>
+                    
+                    <a href="booknow.html" class="px-4 py-2 bg-amber-700 hover:bg-amber-800 text-white rounded-md transition">Book Now</a>
+                    <a href="login.html" class="font-medium px-4 py-2 rounded-md transition-all duration-300 border border-stone-200 dark:border-stone-700 bg-orange-50 dark:bg-orange-950/30 text-orange-800 dark:text-orange-200 hover:bg-orange-100 dark:hover:bg-orange-950/50 hover:border-orange-200 dark:hover:border-orange-800">Login</a>
+                </div>
+            </div>
+
+            <!-- Mobile Toggle Button (Visible up to 1024px) -->
+            <button @click="mobileMenu = !mobileMenu" class="lg:hidden p-2 text-stone-800 dark:text-stone-100 focus:outline-none" aria-label="Toggle Menu">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile Menu Drawer (Animated) -->
+    <div x-show="mobileMenu" 
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 -translate-y-4"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-cloak 
+         class="lg:hidden bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 p-6 flex flex-col space-y-4 shadow-xl">
+        
+        <template x-for="link in [{n:'Home',u:'index.html'},{n:'Home 2',u:'home2.html'},{n:'About',u:'abouts.html'},{n:'Services',u:'services.html'},{n:'Contact',u:'contact.html'}]">
+            <a :href="link.u" 
+               class="block p-2 rounded transition"
+               :class="window.location.pathname.includes(link.u) ? 'font-bold text-amber-700 bg-amber-50 dark:bg-amber-950/20' : 'hover:bg-stone-100 dark:hover:bg-stone-800'"
+               x-text="link.n">
+            </a>
+        </template>
+        
+        <hr class="border-stone-200 dark:border-stone-700">
+        
+        <div class="flex flex-col gap-3">
+            <a href="booknow.html" class="w-full text-center px-4 py-2 bg-amber-700 text-white rounded-md">Book Now</a>
+            <a href="login.html" class="w-full text-center px-4 py-2 rounded-md transition-all duration-300 border border-stone-200 dark:border-stone-700 bg-orange-50 dark:bg-orange-950/30 text-orange-800 dark:text-orange-200 hover:bg-orange-100 dark:hover:bg-orange-950/50 hover:border-orange-200 dark:hover:border-orange-800">Login</a>
+            
+            <div class="flex gap-3 justify-center pt-4">
+                <!-- Fixed Mobile Menu Theme Toggle -->
+                <button @click="darkMode = !darkMode" class="p-2 border rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800 flex items-center justify-center min-w-[50px] transition focus:outline-none">
+                    <span x-text="darkMode ? '☀️' : '🌙'"></span>
+                </button>
+                <button @click="dir = (dir === 'ltr' ? 'rtl' : 'ltr'); localStorage.setItem('dir', dir); window.location.reload()" class="p-2 border rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800 transition">
+                    <span x-text="dir === 'ltr' ? 'RTL' : 'LTR'"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<script>
+    // Execute immediately before the page renders to avoid white flashes
+    if (localStorage.getItem('dark') === 'true' || (!('dark' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+</script>
+<!-- Hero Section -->
+<section class="py-16 md:py-24 bg-stone-50 dark:bg-stone-950 transition-colors duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <!-- Accent Tag -->
+        <span class="text-xs md:text-sm font-semibold tracking-widest text-amber-700 uppercase block mb-3">
+            Get In Touch
+        </span>
+        
+        <!-- Primary Header -->
+        <h1 class="text-4xl sm:text-5xl md:text-6xl font-semibold text-stone-900 dark:text-stone-50 tracking-tight leading-tight mb-6">
+            Let’s Bake Something <br class="hidden sm:inline">Amazing Together.
+        </h1>
+        
+        <!-- Descriptive Paragraph -->
+        <p class="text-base md:text-lg text-stone-600 dark:text-stone-400 font-normal max-w-2xl mx-auto leading-relaxed">
+            Have questions about your sourdough starter, need troubleshooting assistance, or want to coordinate custom commercial flour accounts? Drop us a line.
+        </p>
+    </div>
+</section>
+<!-- Main Content Area: Details & Form Workspace -->
+<section class="py-12 md:py-20 bg-white dark:bg-stone-900 border-t border-b border-stone-100 dark:border-stone-800 transition-colors duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+            
+            <!-- Column 1: Contact Information details (Spans 5 Columns on Large Screens) -->
+            <div class="lg:col-span-5 space-y-10">
+                <div>
+                    <h2 class="text-2xl font-semibold text-stone-900 dark:text-stone-50 tracking-tight mb-4">Contact Information</h2>
+                    <p class="text-stone-600 dark:text-stone-400 font-normal text-sm sm:text-base leading-relaxed">
+                        Our administrative support team monitors channels from Monday through Friday, 8:00 AM to 5:00 PM.
+                    </p>
+                </div>
+
+                <!-- Info Blocks Data Grid Layer -->
+                <div class="space-y-6">
+                    <!-- Location Item -->
+                    <div class="flex gap-4 items-start">
+                        <div class="w-10 h-10 bg-amber-700/10 text-amber-700 flex items-center justify-center rounded-xl shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-semibold uppercase tracking-wider text-stone-500 mb-1">Our Bakery Hub</h4>
+                            <p class="text-sm sm:text-base text-stone-800 dark:text-stone-200 font-normal">742 Flour Mill Avenue, Suite 100<br>San Francisco, CA 94107</p>
+                        </div>
+                    </div>
+
+                    <!-- Email Item -->
+                    <div class="flex gap-4 items-start">
+                        <div class="w-10 h-10 bg-amber-700/10 text-amber-700 flex items-center justify-center rounded-xl shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-semibold uppercase tracking-wider text-stone-500 mb-1">Electronic Support</h4>
+                            <a href="mailto:support@sourdough.com" class="text-sm sm:text-base text-amber-700 hover:text-amber-800 font-semibold transition block">support@sourdough.com</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column 2: Live Form Workspace Area (Spans 7 Columns on Large Screens) -->
+            <div class="lg:col-span-7 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-3xl p-6 sm:p-10 shadow-sm" x-data="{ message: '' }">
+                <form action="#" method="POST" class="space-y-6" @submit.prevent>
+                    <!-- Row: Name & Subject Split Matrix -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label for="name" class="block text-xs font-semibold uppercase tracking-wider text-stone-600 dark:text-stone-400 mb-1.5">Your Name</label>
+                            <input id="name" type="text" required class="w-full px-4 py-3 border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-50 rounded-xl focus:outline-none focus:border-amber-700 dark:focus:border-amber-700 transition duration-200 text-sm font-normal">
+                        </div>
+                        <div>
+                            <label for="email" class="block text-xs font-semibold uppercase tracking-wider text-stone-600 dark:text-stone-400 mb-1.5">Email Address</label>
+                            <input id="email" type="email" required class="w-full px-4 py-3 border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-50 rounded-xl focus:outline-none focus:border-amber-700 dark:focus:border-amber-700 transition duration-200 text-sm font-normal">
+                        </div>
+                    </div>
+
+                    <!-- Row: Inquiry Selection Dropdown -->
+                    <div>
+                        <label for="inquiry" class="block text-xs font-semibold uppercase tracking-wider text-stone-600 dark:text-stone-400 mb-1.5">Inquiry Type</label>
+                        <select id="inquiry" class="w-full px-4 py-3 border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-50 rounded-xl focus:outline-none focus:border-amber-700 dark:focus:border-amber-700 transition duration-200 text-sm font-normal appearance-none cursor-pointer">
+                            <option value="general">General Baking Questions</option>
+                            <option value="order">Subscription & Orders Support</option>
+                            <option value="wholesale">Commercial / Wholesale Supply</option>
+                        </select>
+                    </div>
+
+                    <!-- Row: Message Input Segment with Integrated Character Counter Tracker -->
+                    <div>
+                        <div class="flex justify-between items-center mb-1.5">
+                            <label for="message" class="block text-xs font-semibold uppercase tracking-wider text-stone-600 dark:text-stone-400">Message</label>
+                            <span class="text-[10px] text-stone-400 dark:text-stone-500 font-medium tracking-wider" x-text="message.length + ' / 500'">0 / 500</span>
+                        </div>
+                        <textarea id="message" maxlength="500" x-model="message" rows="5" required class="w-full px-4 py-3 border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-50 rounded-xl focus:outline-none focus:border-amber-700 dark:focus:border-amber-700 transition duration-200 text-sm font-normal resize-none"></textarea>
+                    </div>
+
+                    <!-- Submit Trigger Button Block -->
+                    <div class="pt-2">
+                        <button type="submit" class="w-full sm:w-auto px-8 py-4 bg-amber-700 hover:bg-amber-800 text-white font-semibold rounded-xl active:scale-95 transition-all duration-200 shadow-md hover:shadow-lg text-sm text-center">
+                            Send Message
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</section>
+<!-- Map Section Layout Block -->
+<!-- Wrapper to handle spacing without breaking the full-width map -->
+
+    <section class="relative w-screen h-[350px] md:h-[450px] overflow-hidden transition-colors duration-300 left-[50%] right-[50%] -ml-[50vw] -mr-[50vw]">
+        
+        <!-- Top Shadow Gradient -->
+        <div class="absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-black/10 to-transparent pointer-events-none z-10"></div>
+        
+        <!-- Embedded Full-Width Map -->
+        <iframe 
+            class="w-full h-full border-0 grayscale opacity-90 dark:grayscale-[80%] dark:invert-[90%] dark:opacity-60 transition-all duration-300"
+            src="https://maps.google.com/maps?q=California%20St,%20San%20Francisco,%20CA&t=&z=13&ie=UTF8&iwloc=&output=embed" 
+            allowfullscreen="" 
+            loading="lazy"
+            title="Bakery Hub Location Map">
+        </iframe>
+        
+        <!-- Bottom Shadow Gradient (Now sits directly at the map edge) -->
+        <div class="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-black/10 to-transparent pointer-events-none z-10"></div>
+    </section>
+
+  <footer class="border-t border-stone-200 dark:border-stone-800 mt-20 py-12 bg-stone-50 dark:bg-stone-950">
+    <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-4 gap-12">
+        
+        <!-- Branding & Socials -->
+        <div class="space-y-4">
+         <a href="index.html" class="flex items-center gap-2 group">
+    <!-- Logo Box -->
+    <div class="w-8 h-8 bg-amber-700 text-white flex items-center justify-center rounded-lg group-hover:scale-105 transition-transform duration-300">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2C8.686 2 6 4.686 6 8c0 1.93.89 3.65 2.29 4.77C7.38 13.9 6.7 15.2 6.7 16.6c0 2.98 2.42 5.4 5.4 5.4s5.4-2.42 5.4-5.4c0-1.4-.68-2.7-1.59-3.83C17.11 11.65 18 9.93 18 8c0-3.314-2.686-6-6-6z"/>
+        </svg>
+    </div>
+    
+    <!-- Name -->
+    <span class="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-50 group-hover:text-amber-700 transition-colors">Sourdough</span>
+</a>
+            
+            <!-- Real World Social Icons -->
+          <div class="flex gap-4">
+    <!-- Instagram -->
+    <a href="#" class="text-stone-500 hover:text-pink-600 transition-colors duration-300">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.77 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+        </svg>
+    </a>
+
+    <!-- Twitter/X -->
+    <a href="#" class="text-stone-500 hover:text-blue-600 transition-colors duration-300">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+        </svg>
+    </a>
+
+    <!-- Facebook -->
+    <a href="#" class="text-stone-500 hover:text-blue-800 transition-colors duration-300">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+        </svg>
+    </a>
+</div>
+        </div>
+
+        <!-- Column 1: Quick Links -->
+        <div>
+            <h3 class="font-semibold mb-4 text-stone-900 dark:text-white">Quick Links</h3>
+            <ul class="space-y-2 text-sm text-stone-600 dark:text-stone-400">
+                <li><a href="index.html" class="hover:text-amber-700 transition">Home</a></li>
+                <li><a href="home2.html" class="hover:text-amber-700 transition">Home 2</a></li>
+                <li><a href="abouts.html" class="hover:text-amber-700 transition">About Us</a></li>
+                <li><a href="services.html" class="hover:text-amber-700 transition">Services</a></li>
+                <li><a href="contact.html" class="hover:text-amber-700 transition">Contact</a></li>
+            </ul>
+        </div>
+
+        <!-- Column 2: Navigation -->
+        <div>
+            <h3 class="font-semibold mb-4 text-stone-900 dark:text-white">Navigation</h3>
+            <ul class="space-y-2 text-sm text-stone-600 dark:text-stone-400">
+                <li><a href="booknow.html" class="hover:text-amber-700 transition">Book Now</a></li>
+                <li><a href="pricing.html" class="hover:text-amber-700 transition">Pricing</a></li>
+                <li><a href="gallery.html" class="hover:text-amber-700 transition">Gallery</a></li>
+                <li><a href="404.html" class="hover:text-amber-700 transition">404 Page</a></li>
+                <li><a href="comingsoon.html" class="hover:text-amber-700 transition">Coming Soon</a></li>
+            </ul>
+        </div>
+
+        <!-- Newsletter -->
+        <div>
+            <h3 class="font-semibold mb-4 text-stone-900 dark:text-white">Newsletter</h3>
+            <p class="text-sm text-stone-500 mb-4">Get the latest baking tips directly to your inbox.</p>
+            <div class="flex flex-col gap-2">
+                <input type="email" placeholder="Email address" class="w-full p-2 border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 rounded focus:ring-2 focus:ring-amber-700 outline-none transition-all">
+                <button class="w-full py-2 bg-amber-700 text-white font-medium rounded hover:bg-amber-800 transition-all active:scale-95">Subscribe</button>
+            </div>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>

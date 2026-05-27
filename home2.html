@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en" x-data="{ darkMode: localStorage.getItem('dark') === 'true', dir: localStorage.getItem('dir') || 'ltr', mobileMenu: false }" :class="{'dark': darkMode}" :dir="dir">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23B45309' stroke-width='2'%3E%3Cpath d='M12 2C8.686 2 6 4.686 6 8c0 1.93.89 3.65 2.29 4.77C7.38 13.9 6.7 15.2 6.7 16.6c0 2.98 2.42 5.4 5.4 5.4s5.4-2.42 5.4-5.4c0-1.4-.68-2.7-1.59-3.83C17.11 11.65 18 9.93 18 8c0-3.314-2.686-6-6-6z'/%3E%3C/svg%3E">
+    <title>Sourdough & Artisan Co.</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } }
+        }
+    </script>
+    <style>[x-cloak] { display: none; }</style>
+    
+    <script>
+    // 1. Check for saved direction preference, fallback to default 'ltr'
+    const savedDir = localStorage.getItem('dir') || 'ltr';
+    
+    // 2. Apply it to the HTML element right away
+    document.documentElement.setAttribute('dir', savedDir);
+</script>
+</head>
+<body class="bg-stone-50 dark:bg-stone-900 text-stone-800 dark:text-stone-100 transition-colors duration-300">
+
+ <nav class="sticky top-0 z-50 bg-white/90 dark:bg-stone-950/90 backdrop-blur-md border-b border-stone-200 dark:border-stone-800"
+     x-data="{ 
+        darkMode: localStorage.getItem('dark') === 'true', 
+        dir: localStorage.getItem('dir') || 'ltr', 
+        mobileMenu: false 
+     }"
+     x-init="$watch('darkMode', value => {
+        if (value) {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('dark', 'true');
+        } else {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('dark', 'false');
+        }
+     })">
+     
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-20 items-center">
+            
+            <!-- Logo & Name (Clickable) -->
+            <a href="index.html" class="flex items-center gap-2 group">
+                <div class="w-8 h-8 bg-amber-700 text-white flex items-center justify-center rounded-lg group-hover:scale-105 transition-transform duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2C8.686 2 6 4.686 6 8c0 1.93.89 3.65 2.29 4.77C7.38 13.9 6.7 15.2 6.7 16.6c0 2.98 2.42 5.4 5.4 5.4s5.4-2.42 5.4-5.4c0-1.4-.68-2.7-1.59-3.83C17.11 11.65 18 9.93 18 8c0-3.314-2.686-6-6-6z"/>
+                    </svg>
+                </div>
+                <span class="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-50 group-hover:text-amber-700 transition-colors">Sourdough</span>
+            </a>
+            
+            <!-- Desktop Nav (Hidden until 1024px) -->
+            <div class="hidden lg:flex space-x-6 items-center font-medium">
+                <template x-for="link in [{n:'Home',u:'index.html'},{n:'Home 2',u:'home2.html'},{n:'About',u:'abouts.html'},{n:'Services',u:'services.html'},{n:'Contact',u:'contact.html'}]">
+                    <a :href="link.u" 
+                       class="transition duration-300"
+                       :class="window.location.pathname.includes(link.u) ? 'text-amber-700 font-bold' : 'hover:text-amber-700 text-stone-600 dark:text-stone-300'"
+                       x-text="link.n">
+                    </a>
+                </template>
+                
+                <div class="flex items-center gap-3 border-l border-stone-300 dark:border-stone-700 pl-6 ml-2">
+                    <!-- Fixed Desktop Theme Toggle -->
+                    <button @click="darkMode = !darkMode" class="p-2 hover:bg-stone-200 dark:hover:bg-stone-700 rounded-full transition focus:outline-none" aria-label="Toggle Theme">
+                        <span x-text="darkMode ? '☀️' : '🌙'"></span>
+                    </button>
+                    
+                  <button id="dir-toggle" 
+        class="text-xs font-bold uppercase p-2 border border-stone-300 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-800 rounded transition focus:outline-none">
+    <span id="dir-text">RTL</span>
+</button>
+<script>
+    // 1. Get references to the button and text elements
+    const dirToggle = document.getElementById('dir-toggle');
+    const dirText = document.getElementById('dir-text');
+
+    // 2. Initialize direction from localStorage, or default to 'ltr'
+    let currentDir = localStorage.getItem('dir') || 'ltr';
+
+    // 3. Function to apply the direction state to the webpage
+    function applyDirection(dir) {
+        // Set the direction attribute on the <html> tag
+        document.documentElement.setAttribute('dir', dir);
+        
+        // Update the button text to show the OPPOSITE layout choice
+        dirText.textContent = dir === 'ltr' ? 'RTL' : 'LTR';
+        
+        // Save the choice for future page visits
+        localStorage.setItem('dir', dir);
+    }
+
+    // 4. Run immediately on page load to apply the saved state
+    applyDirection(currentDir);
+
+    // 5. Add a normal click event listener to the toggle button
+    dirToggle.addEventListener('click', () => {
+        // Switch the value back and forth
+        currentDir = currentDir === 'ltr' ? 'rtl' : 'ltr';
+        
+        // Apply the changes instantly
+        applyDirection(currentDir);
+    });
+</script>
+                    
+                    <a href="booknow.html" class="px-4 py-2 bg-amber-700 hover:bg-amber-800 text-white rounded-md transition">Book Now</a>
+                    <a href="login.html" class="font-medium px-4 py-2 rounded-md transition-all duration-300 border border-stone-200 dark:border-stone-700 bg-orange-50 dark:bg-orange-950/30 text-orange-800 dark:text-orange-200 hover:bg-orange-100 dark:hover:bg-orange-950/50 hover:border-orange-200 dark:hover:border-orange-800">Login</a>
+                </div>
+            </div>
+
+            <!-- Mobile Toggle Button (Visible up to 1024px) -->
+            <button @click="mobileMenu = !mobileMenu" class="lg:hidden p-2 text-stone-800 dark:text-stone-100 focus:outline-none" aria-label="Toggle Menu">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile Menu Drawer (Animated) -->
+    <div x-show="mobileMenu" 
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 -translate-y-4"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-cloak 
+         class="lg:hidden bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 p-6 flex flex-col space-y-4 shadow-xl">
+        
+        <template x-for="link in [{n:'Home',u:'index.html'},{n:'Home 2',u:'home2.html'},{n:'About',u:'abouts.html'},{n:'Services',u:'services.html'},{n:'Contact',u:'contact.html'}]">
+            <a :href="link.u" 
+               class="block p-2 rounded transition"
+               :class="window.location.pathname.includes(link.u) ? 'font-bold text-amber-700 bg-amber-50 dark:bg-amber-950/20' : 'hover:bg-stone-100 dark:hover:bg-stone-800'"
+               x-text="link.n">
+            </a>
+        </template>
+        
+        <hr class="border-stone-200 dark:border-stone-700">
+        
+        <div class="flex flex-col gap-3">
+            <a href="booknow.html" class="w-full text-center px-4 py-2 bg-amber-700 text-white rounded-md">Book Now</a>
+            <a href="login.html" class="w-full text-center px-4 py-2 rounded-md transition-all duration-300 border border-stone-200 dark:border-stone-700 bg-orange-50 dark:bg-orange-950/30 text-orange-800 dark:text-orange-200 hover:bg-orange-100 dark:hover:bg-orange-950/50 hover:border-orange-200 dark:hover:border-orange-800">Login</a>
+            
+            <div class="flex gap-3 justify-center pt-4">
+                <!-- Fixed Mobile Menu Theme Toggle -->
+                <button @click="darkMode = !darkMode" class="p-2 border rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800 flex items-center justify-center min-w-[50px] transition focus:outline-none">
+                    <span x-text="darkMode ? '☀️' : '🌙'"></span>
+                </button>
+                <button @click="dir = (dir === 'ltr' ? 'rtl' : 'ltr'); localStorage.setItem('dir', dir); window.location.reload()" class="p-2 border rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800 transition">
+                    <span x-text="dir === 'ltr' ? 'RTL' : 'LTR'"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<script>
+    // Execute immediately before the page renders to avoid white flashes
+    if (localStorage.getItem('dark') === 'true' || (!('dark' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+</script>
+
+<section class="relative min-h-[calc(100vh-4rem)] flex items-center bg-stone-50 dark:bg-stone-950 transition-colors duration-300 py-8 md:py-16 px-3 xs:px-4 sm:px-6 lg:px-8 overflow-hidden w-full box-border"
+         x-data="{ 
+             activeHeadline: 0,
+             headlines: [
+                 'Crafted Through Time & Fermentation',
+                 'Slow Bread for Modern Bakers',
+                 'Discover the Art of Artisan Baking',
+                 'Handcrafted Bread Starts Here'
+             ],
+             init() {
+                 setInterval(() => {
+                     this.activeHeadline = (this.activeHeadline + 1) % this.headlines.length;
+                 }, 4500);
+             }
+         }">
+    
+    <div class="absolute top-1/2 left-1/4 -translate-y-1/2 w-[90%] max-w-[600px] h-[500px] bg-amber-700/[0.03] dark:bg-amber-700/[0.05] blur-[120px] pointer-events-none rounded-full z-0"></div>
+
+    <div class="max-w-7xl mx-auto w-full box-border relative z-10">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center w-full box-border">
+            
+            <div class="grid grid-cols-1 lg:col-span-7 text-center ltr:lg:text-left rtl:lg:text-right flex flex-col justify-center w-full box-border">
+                
+                <div class="mb-4">
+                    <span class="inline-flex items-center px-3 py-1 text-xs font-semibold uppercase tracking-widest text-amber-700 bg-amber-700/10 dark:bg-amber-700/20 rounded-full select-none">
+                        Est. 2026 / Slow Craft
+                    </span>
+                </div>
+                
+                <div class="h-28 xs:h-24 sm:h-28 md:h-36 lg:h-32 flex items-center justify-center ltr:lg:justify-start rtl:lg:justify-start relative mb-4 sm:mb-6 w-full box-border">
+                    <template x-for="(headline, index) in headlines" :key="index">
+                        <h1 x-show="activeHeadline === index"
+                            x-transition:enter="transition ease-out duration-500 absolute"
+                            x-transition:enter-start="opacity-0 translate-y-4"
+                            x-transition:enter-end="opacity-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-400 absolute"
+                            x-transition:leave-start="opacity-100 translate-y-0"
+                            x-transition:leave-end="opacity-0 -translate-y-4"
+                            class="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-semibold tracking-tight text-stone-900 dark:text-stone-50 leading-tight w-full box-border">
+                            <span x-text="headline"></span>
+                        </h1>
+                    </template>
+                </div>
+                
+                <p class="text-xs xs:text-sm sm:text-base font-normal text-stone-500 dark:text-stone-400 max-w-xl mx-auto ltr:lg:mx-0 rtl:lg:mx-0 leading-relaxed mb-8 sm:mb-10 box-border">
+                    Premium sourdough starters, artisan baking tools, and educational experiences designed for passionate bakers.
+                </p>
+
+                <div class="flex flex-col sm:flex-row gap-3 justify-center ltr:lg:justify-start rtl:lg:justify-start items-center max-w-xs sm:max-w-none mx-auto ltr:lg:mx-0 rtl:lg:mx-0 select-none w-full box-border">
+                    <a href="gallery.html" 
+                       class="w-full sm:w-auto px-7 py-3.5 bg-amber-700 hover:bg-amber-800 text-white font-semibold rounded-xl active:scale-95 transition-all duration-200 shadow-md hover:shadow-lg text-xs xs:text-sm text-center whitespace-nowrap box-border">
+                        Explore Collections
+                    </a>
+                    
+                    <a href="abouts.html" 
+                       class="w-full sm:w-auto px-7 py-3.5 border border-stone-300 dark:border-stone-700 hover:border-amber-700 dark:hover:border-amber-700 text-stone-700 dark:text-stone-300 hover:text-amber-700 dark:hover:text-amber-700 font-medium rounded-xl hover:bg-white dark:hover:bg-stone-900 active:scale-95 transition-all duration-200 text-xs xs:text-sm text-center whitespace-nowrap box-border">
+                        Learn Sourdough
+                    </a>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:col-span-5 w-full max-w-md lg:max-w-none mx-auto box-border">
+                <div class="relative rounded-2xl xs:rounded-3xl overflow-hidden border border-stone-200 dark:border-stone-800 shadow-xl aspect-[4/3] sm:aspect-[16/10] lg:aspect-[5/6] bg-stone-100 dark:bg-stone-900 group select-none w-full box-border">
+                    <div class="absolute inset-0 bg-amber-700/5 mix-blend-overlay z-10 pointer-events-none transition group-hover:opacity-0 duration-300"></div>
+                    
+                    <img src="assets/hero2" 
+                         alt="Premium slow fermentation artisan sourdough bread loaf processing" 
+                         loading="lazy"
+                         class="w-full h-full object-cover transform group-hover:scale-[1.02] transition-transform duration-700 ease-out">
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="py-12 md:py-20 bg-stone-50 dark:bg-stone-950 border-t border-stone-200 dark:border-stone-800 transition-colors duration-300 overflow-hidden w-full box-border">
+    <div class="max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8 w-full box-border">
+        
+        <!-- Section Header Title Block -->
+        <div class="mb-10 md:mb-16 max-w-xl ltr:text-left rtl:text-right">
+            <span class="text-xs font-semibold uppercase tracking-widest text-amber-700 block mb-2">Ecosystem Supplies</span>
+            <h2 class="text-2xl xs:text-3xl font-semibold tracking-tight text-stone-900 dark:text-stone-50 leading-tight">Explore Product Categories</h2>
+            <p class="text-xs xs:text-sm font-normal text-stone-500 dark:text-stone-400 mt-2 leading-relaxed">
+                Equip your home baking space with professional trace-monitored biological cultures, premium hardware assets, and direct educational guides.
+            </p>
+        </div>
+
+        <!-- Master Responsive Interactive Categories Grid (Stacks on mobile, 2 cols on tablet, 3 cols on desktop) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 xs:gap-6 w-full box-border">
+            
+            <!-- CATEGORY 1: STARTER CULTURES -->
+            <a href="gallery.html" class="group relative rounded-2xl xs:rounded-3xl overflow-hidden border border-stone-200 dark:border-stone-800 shadow-sm aspect-[4/3] sm:aspect-square bg-stone-100 dark:bg-stone-900 flex items-end focus:outline-none w-full box-border select-none">
+                <!-- High-Definition Visual Background Asset -->
+                <img src="assets/Active wild sourdough starter cultures bubbling in jar" 
+                     alt="Active wild sourdough starter cultures bubbling in jar" 
+                     loading="lazy"
+                     class="absolute inset-0 w-full h-full object-cover transform group-hover:scale-[1.04] transition-transform duration-700 ease-out z-0">
+                <!-- Sliding Card Single-Color Gradient Overlay Mask -->
+                <div class="absolute inset-0 bg-gradient-to-t from-stone-950/90 via-stone-950/40 to-transparent z-10 transition-colors duration-300 group-hover:via-stone-950/50"></div>
+                <!-- Interactive Hover Single-Color Underlay Reveal Border Tint -->
+                <div class="absolute inset-0 border-2 border-transparent group-hover:border-amber-700 rounded-2xl xs:rounded-3xl z-30 transition-colors duration-300"></div>
+                
+                <!-- Content Label Workspace Layout Panel -->
+                <div class="relative z-20 p-5 xs:p-6 w-full ltr:text-left rtl:text-right">
+                    <span class="text-[10px] font-semibold tracking-widest text-amber-700 uppercase block mb-1">Biological</span>
+                    <h3 class="text-base xs:text-lg font-semibold text-white tracking-tight flex items-center gap-1.5 justify-between">
+                        <span>Starter Cultures</span>
+                        <!-- Sliding Indicator Arrow Reveal Icon -->
+                        <svg class="w-4 h-4 transform -translate-x-1 ltr:group-hover:translate-x-0 rtl:translate-x-1 rtl:group-hover:translate-x-0 transition-transform duration-300 text-amber-700 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </h3>
+                </div>
+            </a>
+
+            <!-- CATEGORY 2: BREAD BAKING KITS -->
+            <a href="gallery.html" class="group relative rounded-2xl xs:rounded-3xl overflow-hidden border border-stone-200 dark:border-stone-800 shadow-sm aspect-[4/3] sm:aspect-square bg-stone-100 dark:bg-stone-900 flex items-end focus:outline-none w-full box-border select-none">
+                <img src="assets/Complete bread baking kits with bannetons and scoring tools" 
+                     alt="Complete bread baking kits with bannetons and scoring tools" 
+                     loading="lazy"
+                     class="absolute inset-0 w-full h-full object-cover transform group-hover:scale-[1.04] transition-transform duration-700 ease-out z-0">
+                <div class="absolute inset-0 bg-gradient-to-t from-stone-950/90 via-stone-950/40 to-transparent z-10 transition-colors duration-300 group-hover:via-stone-950/50"></div>
+                <div class="absolute inset-0 border-2 border-transparent group-hover:border-amber-700 rounded-2xl xs:rounded-3xl z-30 transition-colors duration-300"></div>
+                
+                <div class="relative z-20 p-5 xs:p-6 w-full ltr:text-left rtl:text-right">
+                    <span class="text-[10px] font-semibold tracking-widest text-amber-700 uppercase block mb-1">Bundles</span>
+                    <h3 class="text-base xs:text-lg font-semibold text-white tracking-tight flex items-center gap-1.5 justify-between">
+                        <span>Bread Baking Kits</span>
+                        <svg class="w-4 h-4 transform -translate-x-1 ltr:group-hover:translate-x-0 rtl:translate-x-1 rtl:group-hover:translate-x-0 transition-transform duration-300 text-amber-700 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </h3>
+                </div>
+            </a>
+
+            <!-- CATEGORY 3: ORGANIC FLOUR -->
+            <a href="gallery.html" class="group relative rounded-2xl xs:rounded-3xl overflow-hidden border border-stone-200 dark:border-stone-800 shadow-sm aspect-[4/3] sm:aspect-square bg-stone-100 dark:bg-stone-900 flex items-end focus:outline-none w-full box-border select-none">
+                <img src="assets/Stone ground organic flour scoop" 
+                     alt="Stone ground organic flour scoop" 
+                     loading="lazy"
+                     class="absolute inset-0 w-full h-full object-cover transform group-hover:scale-[1.04] transition-transform duration-700 ease-out z-0">
+                <div class="absolute inset-0 bg-gradient-to-t from-stone-950/90 via-stone-950/40 to-transparent z-10 transition-colors duration-300 group-hover:via-stone-950/50"></div>
+                <div class="absolute inset-0 border-2 border-transparent group-hover:border-amber-700 rounded-2xl xs:rounded-3xl z-30 transition-colors duration-300"></div>
+                
+                <div class="relative z-20 p-5 xs:p-6 w-full ltr:text-left rtl:text-right">
+                    <span class="text-[10px] font-semibold tracking-widest text-amber-700 uppercase block mb-1">Ingredients</span>
+                    <h3 class="text-base xs:text-lg font-semibold text-white tracking-tight flex items-center gap-1.5 justify-between">
+                        <span>Organic Flour</span>
+                        <svg class="w-4 h-4 transform -translate-x-1 ltr:group-hover:translate-x-0 rtl:translate-x-1 rtl:group-hover:translate-x-0 transition-transform duration-300 text-amber-700 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </h3>
+                </div>
+            </a>
+
+            <!-- CATEGORY 4: ARTISAN TOOLS -->
+            <a href="gallery.html" class="group relative rounded-2xl xs:rounded-3xl overflow-hidden border border-stone-200 dark:border-stone-800 shadow-sm aspect-[4/3] sm:aspect-square bg-stone-100 dark:bg-stone-900 flex items-end focus:outline-none w-full box-border select-none">
+                <img src="assets/Premium Bread Baking Bundle" 
+                     alt="Premium bread scoring lames and canvas linen couches" 
+                     loading="lazy"
+                     class="absolute inset-0 w-full h-full object-cover transform group-hover:scale-[1.04] transition-transform duration-700 ease-out z-0">
+                <div class="absolute inset-0 bg-gradient-to-t from-stone-950/90 via-stone-950/40 to-transparent z-10 transition-colors duration-300 group-hover:via-stone-950/50"></div>
+                <div class="absolute inset-0 border-2 border-transparent group-hover:border-amber-700 rounded-2xl xs:rounded-3xl z-30 transition-colors duration-300"></div>
+                
+                <div class="relative z-20 p-5 xs:p-6 w-full ltr:text-left rtl:text-right">
+                    <span class="text-[10px] font-semibold tracking-widest text-amber-700 uppercase block mb-1">Hardware</span>
+                    <h3 class="text-base xs:text-lg font-semibold text-white tracking-tight flex items-center gap-1.5 justify-between">
+                        <span>Artisan Tools</span>
+                        <svg class="w-4 h-4 transform -translate-x-1 ltr:group-hover:translate-x-0 rtl:translate-x-1 rtl:group-hover:translate-x-0 transition-transform duration-300 text-amber-700 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </h3>
+                </div>
+            </a>
+
+            <!-- CATEGORY 5: WORKSHOPS -->
+            <a href="gallery.html" class="group relative rounded-2xl xs:rounded-3xl overflow-hidden border border-stone-200 dark:border-stone-800 shadow-sm aspect-[4/3] sm:aspect-square bg-stone-100 dark:bg-stone-900 flex items-end focus:outline-none w-full box-border select-none">
+                <img src="assets/Bakers kneading dough together in live interactive workshop" 
+                     alt="Bakers kneading dough together in live interactive workshop" 
+                     loading="lazy"
+                     class="absolute inset-0 w-full h-full object-cover transform group-hover:scale-[1.04] transition-transform duration-700 ease-out z-0">
+                <div class="absolute inset-0 bg-gradient-to-t from-stone-950/90 via-stone-950/40 to-transparent z-10 transition-colors duration-300 group-hover:via-stone-950/50"></div>
+                <div class="absolute inset-0 border-2 border-transparent group-hover:border-amber-700 rounded-2xl xs:rounded-3xl z-30 transition-colors duration-300"></div>
+                
+                <div class="relative z-20 p-5 xs:p-6 w-full ltr:text-left rtl:text-right">
+                    <span class="text-[10px] font-semibold tracking-widest text-amber-700 uppercase block mb-1">Education</span>
+                    <h3 class="text-base xs:text-lg font-semibold text-white tracking-tight flex items-center gap-1.5 justify-between">
+                        <span>Workshops</span>
+                        <svg class="w-4 h-4 transform -translate-x-1 ltr:group-hover:translate-x-0 rtl:translate-x-1 rtl:group-hover:translate-x-0 transition-transform duration-300 text-amber-700 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </h3>
+                </div>
+            </a>
+
+            <!-- CATEGORY 6: RECIPE BOOKS -->
+            <a href="gallery.html" class="group relative rounded-2xl xs:rounded-3xl overflow-hidden border border-stone-200 dark:border-stone-800 shadow-sm aspect-[4/3] sm:aspect-square bg-stone-100 dark:bg-stone-900 flex items-end focus:outline-none w-full box-border select-none">
+                <img src="assets/Premium minimal hardback artisan baking recipe books" 
+                     alt="Premium minimal hardback artisan baking recipe books" 
+                     loading="lazy"
+                     class="absolute inset-0 w-full h-full object-cover transform group-hover:scale-[1.04] transition-transform duration-700 ease-out z-0">
+                <div class="absolute inset-0 bg-gradient-to-t from-stone-950/90 via-stone-950/40 to-transparent z-10 transition-colors duration-300 group-hover:via-stone-950/50"></div>
+                <div class="absolute inset-0 border-2 border-transparent group-hover:border-amber-700 rounded-2xl xs:rounded-3xl z-30 transition-colors duration-300"></div>
+                
+                <div class="relative z-20 p-5 xs:p-6 w-full ltr:text-left rtl:text-right">
+                    <span class="text-[10px] font-semibold tracking-widest text-amber-700 uppercase block mb-1">Literature</span>
+                    <h3 class="text-base xs:text-lg font-semibold text-white tracking-tight flex items-center gap-1.5 justify-between">
+                        <span>Recipe Books</span>
+                        <svg class="w-4 h-4 transform -translate-x-1 ltr:group-hover:translate-x-0 rtl:translate-x-1 rtl:group-hover:translate-x-0 transition-transform duration-300 text-amber-700 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </h3>
+                </div>
+            </a>
+
+        </div>
+    </div>
+</section>
+<section class="py-16 md:py-24 bg-white dark:bg-stone-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-12">
+            <div>
+                <h2 class="text-3xl md:text-4xl font-semibold text-stone-900 dark:text-stone-50 mb-2">Bestsellers</h2>
+                <p class="text-stone-600 dark:text-stone-400">Our most-loved tools and ingredients for the perfect loaf.</p>
+            </div>
+            <a href="comingsoon.html" class="mt-6 md:mt-0 text-amber-700 font-semibold hover:gap-3 transition-all flex items-center">
+                View All Products &rarr;
+            </a>
+        </div>
+
+        <!-- Bestsellers Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            
+            <!-- Card Template -->
+            <!-- Classic San Francisco Starter -->
+            <div class="group bg-stone-50 dark:bg-stone-950 p-6 rounded-2xl border border-stone-100 dark:border-stone-800 hover:border-amber-200 dark:hover:border-amber-900 transition-all">
+                <div class="aspect-square w-full bg-stone-200 dark:bg-stone-800 rounded-xl mb-6 overflow-hidden">
+                    <img src="assets/Classic San Francisco Starter" alt="Product" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                </div>
+                <h3 class="text-lg font-semibold text-stone-900 dark:text-stone-50 mb-2">Classic San Francisco Starter</h3>
+                <p class="text-stone-500 dark:text-stone-400 text-sm mb-4">A robust, long-aged sourdough culture.</p>
+                <div class="flex items-center justify-between">
+                    <span class="font-bold text-amber-700">$18.00</span>
+                    <button class="px-4 py-2 bg-amber-700 text-white rounded-lg text-sm hover:bg-amber-800 transition">Add to Cart</button>
+                </div>
+            </div>
+
+            <!-- Beginner Artisan Bread Kit -->
+            <div class="group bg-stone-50 dark:bg-stone-950 p-6 rounded-2xl border border-stone-100 dark:border-stone-800 hover:border-amber-200 dark:hover:border-amber-900 transition-all">
+                <div class="aspect-square w-full bg-stone-200 dark:bg-stone-800 rounded-xl mb-6 overflow-hidden">
+                    <img src="assets/Beginner Artisan Bread Kit" alt="Product" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                </div>
+                <h3 class="text-lg font-semibold text-stone-900 dark:text-stone-50 mb-2">Beginner Artisan Bread Kit</h3>
+                <p class="text-stone-500 dark:text-stone-400 text-sm mb-4">Everything needed for your first bake.</p>
+                <div class="flex items-center justify-between">
+                    <span class="font-bold text-amber-700">$45.00</span>
+                    <button class="px-4 py-2 bg-amber-700 text-white rounded-lg text-sm hover:bg-amber-800 transition">Add to Cart</button>
+                </div>
+            </div>
+
+            <!-- Organic Rye Flour -->
+            <div class="group bg-stone-50 dark:bg-stone-950 p-6 rounded-2xl border border-stone-100 dark:border-stone-800 hover:border-amber-200 dark:hover:border-amber-900 transition-all">
+                <div class="aspect-square w-full bg-stone-200 dark:bg-stone-800 rounded-xl mb-6 overflow-hidden">
+                    <img src="assets/Organic Rye Flour" alt="Product" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                </div>
+                <h3 class="text-lg font-semibold text-stone-900 dark:text-stone-50 mb-2">Organic Rye Flour</h3>
+                <p class="text-stone-500 dark:text-stone-400 text-sm mb-4">Stone-ground for maximum nutrition.</p>
+                <div class="flex items-center justify-between">
+                    <span class="font-bold text-amber-700">$12.00</span>
+                    <button class="px-4 py-2 bg-amber-700 text-white rounded-lg text-sm hover:bg-amber-800 transition">Add to Cart</button>
+                </div>
+            </div>
+
+            <!-- Handmade Banneton Basket -->
+            <div class="group bg-stone-50 dark:bg-stone-950 p-6 rounded-2xl border border-stone-100 dark:border-stone-800 hover:border-amber-200 dark:hover:border-amber-900 transition-all">
+                <div class="aspect-square w-full bg-stone-200 dark:bg-stone-800 rounded-xl mb-6 overflow-hidden">
+                    <img src="assets/Handmade Banneton Basket" alt="Product" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                </div>
+                <h3 class="text-lg font-semibold text-stone-900 dark:text-stone-50 mb-2">Handmade Banneton Basket</h3>
+                <p class="text-stone-500 dark:text-stone-400 text-sm mb-4">Natural rattan for perfect proofing.</p>
+                <div class="flex items-center justify-between">
+                    <span class="font-bold text-amber-700">$22.00</span>
+                    <button class="px-4 py-2 bg-amber-700 text-white rounded-lg text-sm hover:bg-amber-800 transition">Add to Cart</button>
+                </div>
+            </div>
+
+            <!-- Bread Scoring Knife Set -->
+            <div class="group bg-stone-50 dark:bg-stone-950 p-6 rounded-2xl border border-stone-100 dark:border-stone-800 hover:border-amber-200 dark:hover:border-amber-900 transition-all">
+                <div class="aspect-square w-full bg-stone-200 dark:bg-stone-800 rounded-xl mb-6 overflow-hidden">
+                    <img src="assets/Bread Scoring Knife Set" alt="Product" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                </div>
+                <h3 class="text-lg font-semibold text-stone-900 dark:text-stone-50 mb-2">Bread Scoring Knife Set</h3>
+                <p class="text-stone-500 dark:text-stone-400 text-sm mb-4">Precision tools for artisan scoring.</p>
+                <div class="flex items-center justify-between">
+                    <span class="font-bold text-amber-700">$25.00</span>
+                    <button class="px-4 py-2 bg-amber-700 text-white rounded-lg text-sm hover:bg-amber-800 transition">Add to Cart</button>
+                </div>
+            </div>
+
+            <!-- Premium Bread Baking Bundle -->
+            <div class="group bg-stone-50 dark:bg-stone-950 p-6 rounded-2xl border border-stone-100 dark:border-stone-800 hover:border-amber-200 dark:hover:border-amber-900 transition-all">
+                <div class="aspect-square w-full bg-stone-200 dark:bg-stone-800 rounded-xl mb-6 overflow-hidden">
+                    <img src="assets/Premium Bread Baking Bundle" alt="Product" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                </div>
+                <h3 class="text-lg font-semibold text-stone-900 dark:text-stone-50 mb-2">Premium Bread Baking Bundle</h3>
+                <p class="text-stone-500 dark:text-stone-400 text-sm mb-4">The ultimate artisan baker's set.</p>
+                <div class="flex items-center justify-between">
+                    <span class="font-bold text-amber-700">$89.00</span>
+                    <button class="px-4 py-2 bg-amber-700 text-white rounded-lg text-sm hover:bg-amber-800 transition">Add to Cart</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<!-- Premium Minimal Editorial Process Grid Section -->
+<section class="py-12 md:py-20 bg-white dark:bg-stone-900 border-t border-stone-200 dark:border-stone-800 transition-colors duration-300 overflow-hidden w-full box-border">
+    <div class="max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8 w-full box-border">
+        
+        <!-- Section Header Title Block -->
+        <div class="text-center mb-12 md:mb-20 max-w-xl mx-auto w-full box-border">
+            <span class="text-xs font-semibold uppercase tracking-widest text-amber-700 block mb-2">Biological Timeline</span>
+            <h2 class="text-2xl xs:text-3xl font-semibold tracking-tight text-stone-900 dark:text-stone-50 leading-tight">The Sourdough Process</h2>
+            <p class="text-xs xs:text-sm font-normal text-stone-500 dark:text-stone-400 mt-2 leading-relaxed">
+                Five key stages of slow biological transformation required to produce an authentic, high-hydration open crumb loaf at home.
+            </p>
+        </div>
+
+        <!-- Master Responsive Grid Wrapper (Stacks vertically on mobile, spans horizontally on desktop with no connection lines) -->
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-6 relative w-full box-border">
+            
+            <!-- STEP 1: FEED THE STARTER -->
+            <div class="group flex flex-row lg:flex-col items-start lg:text-center gap-4 lg:gap-0 relative w-full box-border">
+                <!-- Fluid Sizing Icon Bubble -->
+                <div class="w-12 h-12 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 text-amber-700 flex items-center justify-center rounded-xl shrink-0 group-hover:border-amber-700 transition-colors duration-300 lg:mx-auto relative z-10 select-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+                    </svg>
+                </div>
+                <!-- Content Data Panel -->
+                <div class="space-y-1 mt-0 lg:mt-5 min-w-0 flex-grow ltr:text-left rtl:text-right lg:ltr:text-center lg:rtl:text-center">
+                    <span class="text-[10px] font-semibold tracking-wider text-amber-700 uppercase block">Stage 01</span>
+                    <h3 class="text-sm xs:text-base font-semibold text-stone-900 dark:text-stone-50 tracking-tight">Feed the Starter</h3>
+                    <p class="text-[11px] xs:text-xs font-normal text-stone-500 dark:text-stone-400 leading-relaxed max-w-xs">
+                        Activate your wild live yeast populations with organic stone-ground flour blends to establish high volume potential.
+                    </p>
+                </div>
+            </div>
+
+            <!-- STEP 2: MIX THE DOUGH -->
+            <div class="group flex flex-row lg:flex-col items-start lg:text-center gap-4 lg:gap-0 relative w-full box-border">
+                <div class="w-12 h-12 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 text-amber-700 flex items-center justify-center rounded-xl shrink-0 group-hover:border-amber-700 transition-colors duration-300 lg:mx-auto relative z-10 select-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                    </svg>
+                </div>
+                <div class="space-y-1 mt-0 lg:mt-5 min-w-0 flex-grow ltr:text-left rtl:text-right lg:ltr:text-center lg:rtl:text-center">
+                    <span class="text-[10px] font-semibold tracking-wider text-amber-700 uppercase block">Stage 02</span>
+                    <h3 class="text-sm xs:text-base font-semibold text-stone-900 dark:text-stone-50 tracking-tight">Mix the Dough</h3>
+                    <p class="text-[11px] xs:text-xs font-normal text-stone-500 dark:text-stone-400 leading-relaxed max-w-xs">
+                        Combine water matrices and flours gently to initiate autolyse hydration, formatting strong wet gluten link foundations.
+                    </p>
+                </div>
+            </div>
+
+            <!-- STEP 3: FERMENT SLOWLY -->
+            <div class="group flex flex-row lg:flex-col items-start lg:text-center gap-4 lg:gap-0 relative w-full box-border">
+                <div class="w-12 h-12 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 text-amber-700 flex items-center justify-center rounded-xl shrink-0 group-hover:border-amber-700 transition-colors duration-300 lg:mx-auto relative z-10 select-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <div class="space-y-1 mt-0 lg:mt-5 min-w-0 flex-grow ltr:text-left rtl:text-right lg:ltr:text-center lg:rtl:text-center">
+                    <span class="text-[10px] font-semibold tracking-wider text-amber-700 uppercase block">Stage 03</span>
+                    <h3 class="text-sm xs:text-base font-semibold text-stone-900 dark:text-stone-50 tracking-tight">Ferment Slowly</h3>
+                    <p class="text-[11px] xs:text-xs font-normal text-stone-500 dark:text-stone-400 leading-relaxed max-w-xs">
+                        Allow the wet batch to rise across deep ambient bulk timelines to develop natural enzyme flavor complexities.
+                    </p>
+                </div>
+            </div>
+
+            <!-- STEP 4: SHAPE CAREFULLY -->
+            <div class="group flex flex-row lg:flex-col items-start lg:text-center gap-4 lg:gap-0 relative w-full box-border">
+                <div class="w-12 h-12 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 text-amber-700 flex items-center justify-center rounded-xl shrink-0 group-hover:border-amber-700 transition-colors duration-300 lg:mx-auto relative z-10 select-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m3 5a1.5 1.5 0 01-3 0v-1m0 1a1.5 1.5 0 01-3 0v-4.5M14 11V6.5a1.5 1.5 0 00-3 0V11"/>
+                    </svg>
+                </div>
+                <div class="space-y-1 mt-0 lg:mt-5 min-w-0 flex-grow ltr:text-left rtl:text-right lg:ltr:text-center lg:rtl:text-center">
+                    <span class="text-[10px] font-semibold tracking-wider text-amber-700 uppercase block">Stage 04</span>
+                    <h3 class="text-sm xs:text-base font-semibold text-stone-900 dark:text-stone-50 tracking-tight">Shape Carefully</h3>
+                    <p class="text-[11px] xs:text-xs font-normal text-stone-500 dark:text-stone-400 leading-relaxed max-w-xs">
+                        Build outer skin tension using delicate tuck methods before placing dough sets inside cold canvas proofing baskets.
+                    </p>
+                </div>
+            </div>
+
+            <!-- STEP 5: BAKE BEAUTIFUL BREAD -->
+            <div class="group flex flex-row lg:flex-col items-start lg:text-center gap-4 lg:gap-0 relative w-full box-border">
+                <div class="w-12 h-12 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 text-amber-700 flex items-center justify-center rounded-xl shrink-0 group-hover:border-amber-700 transition-colors duration-300 lg:mx-auto relative z-10 select-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343a8 8 0 010 11.314z"/>
+                    </svg>
+                </div>
+                <div class="space-y-1 mt-0 lg:mt-5 min-w-0 flex-grow ltr:text-left rtl:text-right lg:ltr:text-center lg:rtl:text-center">
+                    <span class="text-[10px] font-semibold tracking-wider text-amber-700 uppercase block">Stage 05</span>
+                    <h3 class="text-sm xs:text-base font-semibold text-stone-900 dark:text-stone-50 tracking-tight">Bake Beautiful Bread</h3>
+                    <p class="text-[11px] xs:text-xs font-normal text-stone-500 dark:text-stone-400 leading-relaxed max-w-xs">
+                        Score with razor lames and slide onto stone decks under steam to unlock high spring heights and deep blistered cuts.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<section class="py-16 md:py-24 bg-stone-50 dark:bg-stone-950" x-data="{ billing: 'monthly' }">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header & Toggle -->
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-semibold text-stone-900 dark:text-stone-50 mb-6">Simple, Transparent Pricing</h2>
+            
+            <!-- Toggle Switch -->
+            <div class="flex items-center justify-center gap-4">
+                <span class="text-sm font-medium" :class="billing === 'monthly' ? 'text-amber-700' : 'text-stone-500'">Monthly</span>
+                <button @click="billing = (billing === 'monthly' ? 'yearly' : 'monthly')" class="w-14 h-7 bg-stone-200 dark:bg-stone-700 rounded-full p-1 transition-all">
+                    <div class="w-5 h-5 bg-amber-700 rounded-full transition-all" :class="billing === 'yearly' ? 'translate-x-7' : 'translate-x-0'"></div>
+                </button>
+                <span class="text-sm font-medium" :class="billing === 'yearly' ? 'text-amber-700' : 'text-stone-500'">Yearly <span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full ml-1">Save 20%</span></span>
+            </div>
+        </div>
+
+        <!-- Pricing Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            <!-- Starter Plan -->
+            <div class="p-8 bg-white dark:bg-stone-900 rounded-2xl border border-stone-200 dark:border-stone-800 flex flex-col">
+                <h3 class="text-lg font-semibold mb-2">Starter</h3>
+                <div class="text-4xl font-bold mb-6">
+                    <span x-text="billing === 'monthly' ? '$29' : '$23'"></span>
+                    <span class="text-lg font-normal text-stone-500">/mo</span>
+                </div>
+                <ul class="space-y-4 mb-8 flex-grow text-stone-600 dark:text-stone-400">
+                    <li>✓ 1 Sourdough Starter</li>
+                    <li>✓ Basic Baking Guide</li>
+                    <li>✓ Email Support</li>
+                </ul>
+                <button class="w-full py-3 border border-amber-700 text-amber-700 rounded-lg hover:bg-amber-700 hover:text-white transition">Choose Plan</button>
+            </div>
+
+            <!-- Pro Plan (Highlighted) -->
+            <div class="p-8 bg-stone-900 dark:bg-amber-800 rounded-2xl text-white relative flex flex-col shadow-xl">
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-amber-700 text-white text-xs px-3 py-1 rounded-full">POPULAR</div>
+                <h3 class="text-lg font-semibold mb-2">Artisan Pro</h3>
+                <div class="text-4xl font-bold mb-6">
+                    <span x-text="billing === 'monthly' ? '$59' : '$47'"></span>
+                    <span class="text-lg font-normal text-stone-300">/mo</span>
+                </div>
+                <ul class="space-y-4 mb-8 flex-grow">
+                    <li>✓ 3 Starter Varieties</li>
+                    <li>✓ Full Video Masterclass</li>
+                    <li>✓ Priority Support</li>
+                </ul>
+                <button class="w-full py-3 bg-amber-700 hover:bg-amber-600 transition rounded-lg">Choose Plan</button>
+            </div>
+
+            <!-- Expert Plan -->
+            <div class="p-8 bg-white dark:bg-stone-900 rounded-2xl border border-stone-200 dark:border-stone-800 flex flex-col">
+                <h3 class="text-lg font-semibold mb-2">Master</h3>
+                <div class="text-4xl font-bold mb-6">
+                    <span x-text="billing === 'monthly' ? '$99' : '$79'"></span>
+                    <span class="text-lg font-normal text-stone-500">/mo</span>
+                </div>
+                <ul class="space-y-4 mb-8 flex-grow text-stone-600 dark:text-stone-400">
+                    <li>✓ All Starter Varieties</li>
+                    <li>✓ 1-on-1 Baking Coaching</li>
+                    <li>✓ Community Access</li>
+                </ul>
+                <button class="w-full py-3 border border-amber-700 text-amber-700 rounded-lg hover:bg-amber-700 hover:text-white transition">Choose Plan</button>
+            </div>
+
+        </div>
+    </div>
+</section>
+<!-- Testimonial Section with Interactive Image Cards -->
+<section class="py-16 md:py-24 bg-white dark:bg-stone-900" x-data="{ activeIndex: 0, totalSlides: 3 }">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-semibold text-stone-900 dark:text-stone-50 mb-4">Trusted by Artisan Bakers</h2>
+            <p class="text-stone-600 dark:text-stone-400 max-w-2xl mx-auto">Join thousands of passionate home bakers and professionals who rely on our live cultures and tools.</p>
+        </div>
+
+        <!-- Desktop View (Static Grid for 1024px and Desktop) -->
+        <div class="hidden lg:grid grid-cols-3 gap-8">
+            <!-- Testimonial 1 -->
+            <div class="group bg-stone-50 dark:bg-stone-950 p-8 rounded-2xl border border-stone-100 dark:border-stone-800 flex flex-col justify-between transition-all duration-300 hover:shadow-xl hover:border-amber-200 dark:hover:border-amber-900">
+                <div>
+                    <div class="text-amber-700 mb-4 text-xl tracking-wider">★★★★★</div>
+                    <p class="text-stone-600 dark:text-stone-400 mb-6 italic leading-relaxed">"The starter culture is incredibly robust! My first loaf had the perfect open crumb structure and tangy profile I’ve been trying to achieve."</p>
+                </div>
+                <div class="flex items-center gap-4 pt-4 border-t border-stone-200 dark:border-stone-800">
+                    <!-- Image Card with Hover Zoom -->
+                    <div class="w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-stone-200 dark:border-stone-700 shadow-sm">
+                        <img src="assets/gt1" alt="Sarah Jenkins" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-stone-900 dark:text-stone-50 text-sm">Sarah Jenkins</h4>
+                        <p class="text-xs text-stone-500">Home Baker</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testimonial 2 -->
+            <div class="group bg-stone-50 dark:bg-stone-950 p-8 rounded-2xl border border-stone-100 dark:border-stone-800 flex flex-col justify-between transition-all duration-300 hover:shadow-xl hover:border-amber-200 dark:hover:border-amber-900">
+                <div>
+                    <div class="text-amber-700 mb-4 text-xl tracking-wider">★★★★★</div>
+                    <p class="text-stone-600 dark:text-stone-400 mb-6 italic leading-relaxed">"The banneton and lame set changed my scoring game entirely. Everything I needed arrived fresh and packed in fully sustainable packaging."</p>
+                </div>
+                <div class="flex items-center gap-4 pt-4 border-t border-stone-200 dark:border-stone-800">
+                    <!-- Image Card with Hover Zoom -->
+                    <div class="w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-stone-200 dark:border-stone-700 shadow-sm">
+                        <img src="assets/gt2" alt="Marcus Thorne" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-stone-900 dark:text-stone-50 text-sm">Marcus Thorne</h4>
+                        <p class="text-xs text-stone-500">Culinary Student</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testimonial 3 -->
+            <div class="group bg-stone-50 dark:bg-stone-950 p-8 rounded-2xl border border-stone-100 dark:border-stone-800 flex flex-col justify-between transition-all duration-300 hover:shadow-xl hover:border-amber-200 dark:hover:border-amber-900">
+                <div>
+                    <div class="text-amber-700 mb-4 text-xl tracking-wider">★★★★★</div>
+                    <p class="text-stone-600 dark:text-stone-400 mb-6 italic leading-relaxed">"Finally, organic heritage flour that actually holds high hydration. The automated delivery program keeps my bakery perfectly stocked."</p>
+                </div>
+                <div class="flex items-center gap-4 pt-4 border-t border-stone-200 dark:border-stone-800">
+                    <!-- Image Card with Hover Zoom -->
+                    <div class="w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-stone-200 dark:border-stone-700 shadow-sm">
+                        <img src="assets/gt3" alt="Elena Rodriguez" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-stone-900 dark:text-stone-50 text-sm">Elena Rodriguez</h4>
+                        <p class="text-xs text-stone-500">Artisan Bakery Owner</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile & Tablet Slider (Responsive View under 1024px down to 360px mobile) -->
+        <div class="lg:hidden relative overflow-hidden">
+            <div class="flex transition-transform duration-300 ease-out" :style="`transform: translateX(-${activeIndex * 100}%)`">
+                
+                <!-- Slide 1 -->
+                <div class="w-full shrink-0 px-2">
+                    <div class="group bg-stone-50 dark:bg-stone-950 p-6 sm:p-8 rounded-2xl border border-stone-100 dark:border-stone-800">
+                        <div class="text-amber-700 mb-4 text-xl">★★★★★</div>
+                        <p class="text-stone-600 dark:text-stone-400 mb-6 italic text-sm sm:text-base">"The starter culture is incredibly robust! My first loaf had the perfect open crumb structure and tangy profile I’ve been trying to achieve for months."</p>
+                        <div class="flex items-center gap-4 pt-4 border-t border-stone-200 dark:border-stone-800">
+                            <div class="w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-stone-200 dark:border-stone-700 shadow-sm">
+                                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=150" alt="Sarah Jenkins" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-stone-900 dark:text-stone-50 text-sm">Sarah Jenkins</h4>
+                                <p class="text-xs text-stone-500">Home Baker</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 2 -->
+                <div class="w-full shrink-0 px-2">
+                    <div class="group bg-stone-50 dark:bg-stone-950 p-6 sm:p-8 rounded-2xl border border-stone-100 dark:border-stone-800">
+                        <div class="text-amber-700 mb-4 text-xl">★★★★★</div>
+                        <p class="text-stone-600 dark:text-stone-400 mb-6 italic text-sm sm:text-base">"The banneton and lame set changed my scoring game entirely. Everything I needed arrived fresh and packed in fully sustainable packaging."</p>
+                        <div class="flex items-center gap-4 pt-4 border-t border-stone-200 dark:border-stone-800">
+                            <div class="w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-stone-200 dark:border-stone-700 shadow-sm">
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=150" alt="Marcus Thorne" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-stone-900 dark:text-stone-50 text-sm">Marcus Thorne</h4>
+                                <p class="text-xs text-stone-500">Culinary Student</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 3 -->
+                <div class="w-full shrink-0 px-2">
+                    <div class="group bg-stone-50 dark:bg-stone-950 p-6 sm:p-8 rounded-2xl border border-stone-100 dark:border-stone-800">
+                        <div class="text-amber-700 mb-4 text-xl">★★★★★</div>
+                        <p class="text-stone-600 dark:text-stone-400 mb-6 italic text-sm sm:text-base">"Finally, organic heritage flour that actually holds high hydration. The automated delivery program keeps my bakery perfectly stocked."</p>
+                        <div class="flex items-center gap-4 pt-4 border-t border-stone-200 dark:border-stone-800">
+                            <div class="w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-stone-200 dark:border-stone-700 shadow-sm">
+                                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150" alt="Elena Rodriguez" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-stone-900 dark:text-stone-50 text-sm">Elena Rodriguez</h4>
+                                <p class="text-xs text-stone-500">Artisan Bakery Owner</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Slider Control Dots -->
+            <div class="flex justify-center gap-2 mt-6">
+                <template x-for="(slide, index) in Array.from({ length: totalSlides })">
+                    <button @click="activeIndex = index" 
+                            class="h-2.5 rounded-full transition-all duration-300"
+                            :class="activeIndex === index ? 'w-8 bg-amber-700' : 'w-2.5 bg-stone-300 dark:bg-stone-700'">
+                    </button>
+                </template>
+            </div>
+        </div>
+
+    </div>
+</section>
+<!-- Premium Final CTA Banner Section -->
+<section class="py-16 md:py-24 bg-stone-50 dark:bg-stone-950 transition-colors duration-300 overflow-hidden w-full box-border"
+         x-data="{ 
+             activeHeadline: 0,
+             headlines: [
+                 'Start Baking Better Bread Today',
+                 'Bring Artisan Baking Home',
+                 'Join the Sourdough Movement'
+             ],
+             init() {
+                 setInterval(() => {
+                     this.activeHeadline = (this.activeHeadline + 1) % this.headlines.length;
+                 }, 4000);
+             }
+         }">
+    
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center w-full box-border">
+        
+        <!-- Animated Headline Window (Height-locked to prevent layout shift) -->
+        <div class="h-24 xs:h-28 md:h-32 flex items-center justify-center relative mb-8 w-full box-border">
+            <template x-for="(headline, index) in headlines" :key="index">
+                <h2 x-show="activeHeadline === index"
+                    x-transition:enter="transition ease-out duration-500 absolute"
+                    x-transition:enter-start="opacity-0 translate-y-3"
+                    x-transition:enter-end="opacity-100 translate-y-0"
+                    x-transition:leave="transition ease-in duration-400 absolute"
+                    x-transition:leave-start="opacity-100 translate-y-0"
+                    x-transition:leave-end="opacity-0 -translate-y-3"
+                    class="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-semibold text-stone-900 dark:text-stone-50 tracking-tight leading-tight w-full box-border">
+                    <span x-text="headline"></span>
+                </h2>
+            </template>
+        </div>
+        
+        <!-- Supporting Narrative Text -->
+        <p class="text-xs xs:text-sm sm:text-base font-normal text-stone-500 dark:text-stone-400 max-w-lg mx-auto leading-relaxed mb-10 sm:mb-12 box-border">
+            Equip your kitchen with professional-grade tools, active biological starters, and comprehensive training to master the crust.
+        </p>
+
+        <!-- Responsive Action Button Array -->
+        <div class="flex flex-col xs:flex-row gap-3 justify-center items-center max-w-xs xs:max-w-none mx-auto w-full box-border">
+            <!-- Primary Action -->
+            <a href="login.html" 
+               class="w-full xs:w-auto px-8 py-4 bg-amber-700 hover:bg-amber-800 text-white font-semibold rounded-xl active:scale-95 transition-all duration-200 shadow-md hover:shadow-lg text-xs xs:text-sm text-center whitespace-nowrap box-border">
+                Join Now
+            </a>
+            
+            <!-- Secondary Action -->
+            <a href="booknow.html" 
+               class="w-full xs:w-auto px-8 py-4 border border-stone-300 dark:border-stone-700 hover:border-amber-700 dark:hover:border-amber-700 text-stone-700 dark:text-stone-300 hover:text-amber-700 dark:hover:text-amber-700 font-medium rounded-xl hover:bg-stone-100 dark:hover:bg-stone-900 active:scale-95 transition-all duration-200 text-xs xs:text-sm text-center whitespace-nowrap box-border">
+                Book a Workshop
+            </a>
+        </div>
+
+    </div>
+</section>
+   <footer class="border-t border-stone-200 dark:border-stone-800 mt-20 py-12 bg-stone-50 dark:bg-stone-950">
+    <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-4 gap-12">
+        
+        <!-- Branding & Socials -->
+        <div class="space-y-4">
+         <a href="index.html" class="flex items-center gap-2 group">
+    <!-- Logo Box -->
+    <div class="w-8 h-8 bg-amber-700 text-white flex items-center justify-center rounded-lg group-hover:scale-105 transition-transform duration-300">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2C8.686 2 6 4.686 6 8c0 1.93.89 3.65 2.29 4.77C7.38 13.9 6.7 15.2 6.7 16.6c0 2.98 2.42 5.4 5.4 5.4s5.4-2.42 5.4-5.4c0-1.4-.68-2.7-1.59-3.83C17.11 11.65 18 9.93 18 8c0-3.314-2.686-6-6-6z"/>
+        </svg>
+    </div>
+    
+    <!-- Name -->
+    <span class="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-50 group-hover:text-amber-700 transition-colors">Sourdough</span>
+</a>
+            
+            <!-- Real World Social Icons -->
+          <div class="flex gap-4">
+    <!-- Instagram -->
+    <a href="#" class="text-stone-500 hover:text-pink-600 transition-colors duration-300">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.77 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+        </svg>
+    </a>
+
+    <!-- Twitter/X -->
+    <a href="#" class="text-stone-500 hover:text-blue-600 transition-colors duration-300">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+        </svg>
+    </a>
+
+    <!-- Facebook -->
+    <a href="#" class="text-stone-500 hover:text-blue-800 transition-colors duration-300">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+        </svg>
+    </a>
+</div>
+        </div>
+
+        <!-- Column 1: Quick Links -->
+        <div>
+            <h3 class="font-semibold mb-4 text-stone-900 dark:text-white">Quick Links</h3>
+            <ul class="space-y-2 text-sm text-stone-600 dark:text-stone-400">
+                <li><a href="index.html" class="hover:text-amber-700 transition">Home</a></li>
+                <li><a href="home2.html" class="hover:text-amber-700 transition">Home 2</a></li>
+                <li><a href="abouts.html" class="hover:text-amber-700 transition">About Us</a></li>
+                <li><a href="services.html" class="hover:text-amber-700 transition">Services</a></li>
+                <li><a href="contact.html" class="hover:text-amber-700 transition">Contact</a></li>
+            </ul>
+        </div>
+
+        <!-- Column 2: Navigation -->
+        <div>
+            <h3 class="font-semibold mb-4 text-stone-900 dark:text-white">Navigation</h3>
+            <ul class="space-y-2 text-sm text-stone-600 dark:text-stone-400">
+                <li><a href="booknow.html" class="hover:text-amber-700 transition">Book Now</a></li>
+                <li><a href="pricing.html" class="hover:text-amber-700 transition">Pricing</a></li>
+                <li><a href="gallery.html" class="hover:text-amber-700 transition">Gallery</a></li>
+                <li><a href="404.html" class="hover:text-amber-700 transition">404 Page</a></li>
+                <li><a href="comingsoon.html" class="hover:text-amber-700 transition">Coming Soon</a></li>
+            </ul>
+        </div>
+
+        <!-- Newsletter -->
+        <div>
+            <h3 class="font-semibold mb-4 text-stone-900 dark:text-white">Newsletter</h3>
+            <p class="text-sm text-stone-500 mb-4">Get the latest baking tips directly to your inbox.</p>
+            <div class="flex flex-col gap-2">
+                <input type="email" placeholder="Email address" class="w-full p-2 border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 rounded focus:ring-2 focus:ring-amber-700 outline-none transition-all">
+                <button class="w-full py-2 bg-amber-700 text-white font-medium rounded hover:bg-amber-800 transition-all active:scale-95">Subscribe</button>
+            </div>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en" x-data="{ darkMode: localStorage.getItem('dark') === 'true', dir: localStorage.getItem('dir') || 'ltr', mobileMenu: false }" :class="{'dark': darkMode}" :dir="dir">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23B45309' stroke-width='2'%3E%3Cpath d='M12 2C8.686 2 6 4.686 6 8c0 1.93.89 3.65 2.29 4.77C7.38 13.9 6.7 15.2 6.7 16.6c0 2.98 2.42 5.4 5.4 5.4s5.4-2.42 5.4-5.4c0-1.4-.68-2.7-1.59-3.83C17.11 11.65 18 9.93 18 8c0-3.314-2.686-6-6-6z'/%3E%3C/svg%3E">
+    <title>Sourdough & Artisan Co.</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } }
+        }
+    </script>
+    <style>[x-cloak] { display: none; }</style>
+    
+    <script>
+    // 1. Check for saved direction preference, fallback to default 'ltr'
+    const savedDir = localStorage.getItem('dir') || 'ltr';
+    
+    // 2. Apply it to the HTML element right away
+    document.documentElement.setAttribute('dir', savedDir);
+</script>
+</head>
+<body class="bg-stone-50 dark:bg-stone-900 text-stone-800 dark:text-stone-100 transition-colors duration-300">
+
+ <nav class="sticky top-0 z-50 bg-white/90 dark:bg-stone-950/90 backdrop-blur-md border-b border-stone-200 dark:border-stone-800"
+     x-data="{ 
+        darkMode: localStorage.getItem('dark') === 'true', 
+        dir: localStorage.getItem('dir') || 'ltr', 
+        mobileMenu: false 
+     }"
+     x-init="$watch('darkMode', value => {
+        if (value) {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('dark', 'true');
+        } else {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('dark', 'false');
+        }
+     })">
+     
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-20 items-center">
+            
+            <!-- Logo & Name (Clickable) -->
+            <a href="index.html" class="flex items-center gap-2 group">
+                <div class="w-8 h-8 bg-amber-700 text-white flex items-center justify-center rounded-lg group-hover:scale-105 transition-transform duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2C8.686 2 6 4.686 6 8c0 1.93.89 3.65 2.29 4.77C7.38 13.9 6.7 15.2 6.7 16.6c0 2.98 2.42 5.4 5.4 5.4s5.4-2.42 5.4-5.4c0-1.4-.68-2.7-1.59-3.83C17.11 11.65 18 9.93 18 8c0-3.314-2.686-6-6-6z"/>
+                    </svg>
+                </div>
+                <span class="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-50 group-hover:text-amber-700 transition-colors">Sourdough</span>
+            </a>
+            
+            <!-- Desktop Nav (Hidden until 1024px) -->
+            <div class="hidden lg:flex space-x-6 items-center font-medium">
+                <template x-for="link in [{n:'Home',u:'index.html'},{n:'Home 2',u:'home2.html'},{n:'About',u:'abouts.html'},{n:'Services',u:'services.html'},{n:'Contact',u:'contact.html'}]">
+                    <a :href="link.u" 
+                       class="transition duration-300"
+                       :class="window.location.pathname.includes(link.u) ? 'text-amber-700 font-bold' : 'hover:text-amber-700 text-stone-600 dark:text-stone-300'"
+                       x-text="link.n">
+                    </a>
+                </template>
+                
+                <div class="flex items-center gap-3 border-l border-stone-300 dark:border-stone-700 pl-6 ml-2">
+                    <!-- Fixed Desktop Theme Toggle -->
+                    <button @click="darkMode = !darkMode" class="p-2 hover:bg-stone-200 dark:hover:bg-stone-700 rounded-full transition focus:outline-none" aria-label="Toggle Theme">
+                        <span x-text="darkMode ? '☀️' : '🌙'"></span>
+                    </button>
+                    
+                  <button id="dir-toggle" 
+        class="text-xs font-bold uppercase p-2 border border-stone-300 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-800 rounded transition focus:outline-none">
+    <span id="dir-text">RTL</span>
+</button>
+<script>
+    // 1. Get references to the button and text elements
+    const dirToggle = document.getElementById('dir-toggle');
+    const dirText = document.getElementById('dir-text');
+
+    // 2. Initialize direction from localStorage, or default to 'ltr'
+    let currentDir = localStorage.getItem('dir') || 'ltr';
+
+    // 3. Function to apply the direction state to the webpage
+    function applyDirection(dir) {
+        // Set the direction attribute on the <html> tag
+        document.documentElement.setAttribute('dir', dir);
+        
+        // Update the button text to show the OPPOSITE layout choice
+        dirText.textContent = dir === 'ltr' ? 'RTL' : 'LTR';
+        
+        // Save the choice for future page visits
+        localStorage.setItem('dir', dir);
+    }
+
+    // 4. Run immediately on page load to apply the saved state
+    applyDirection(currentDir);
+
+    // 5. Add a normal click event listener to the toggle button
+    dirToggle.addEventListener('click', () => {
+        // Switch the value back and forth
+        currentDir = currentDir === 'ltr' ? 'rtl' : 'ltr';
+        
+        // Apply the changes instantly
+        applyDirection(currentDir);
+    });
+</script>
+                    
+                    <a href="booknow.html" class="px-4 py-2 bg-amber-700 hover:bg-amber-800 text-white rounded-md transition">Book Now</a>
+                    <a href="login.html" class="font-medium px-4 py-2 rounded-md transition-all duration-300 border border-stone-200 dark:border-stone-700 bg-orange-50 dark:bg-orange-950/30 text-orange-800 dark:text-orange-200 hover:bg-orange-100 dark:hover:bg-orange-950/50 hover:border-orange-200 dark:hover:border-orange-800">Login</a>
+                </div>
+            </div>
+
+            <!-- Mobile Toggle Button (Visible up to 1024px) -->
+            <button @click="mobileMenu = !mobileMenu" class="lg:hidden p-2 text-stone-800 dark:text-stone-100 focus:outline-none" aria-label="Toggle Menu">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile Menu Drawer (Animated) -->
+    <div x-show="mobileMenu" 
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 -translate-y-4"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-cloak 
+         class="lg:hidden bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 p-6 flex flex-col space-y-4 shadow-xl">
+        
+        <template x-for="link in [{n:'Home',u:'index.html'},{n:'Home 2',u:'home2.html'},{n:'About',u:'abouts.html'},{n:'Services',u:'services.html'},{n:'Contact',u:'contact.html'}]">
+            <a :href="link.u" 
+               class="block p-2 rounded transition"
+               :class="window.location.pathname.includes(link.u) ? 'font-bold text-amber-700 bg-amber-50 dark:bg-amber-950/20' : 'hover:bg-stone-100 dark:hover:bg-stone-800'"
+               x-text="link.n">
+            </a>
+        </template>
+        
+        <hr class="border-stone-200 dark:border-stone-700">
+        
+        <div class="flex flex-col gap-3">
+            <a href="booknow.html" class="w-full text-center px-4 py-2 bg-amber-700 text-white rounded-md">Book Now</a>
+            <a href="login.html" class="w-full text-center px-4 py-2 rounded-md transition-all duration-300 border border-stone-200 dark:border-stone-700 bg-orange-50 dark:bg-orange-950/30 text-orange-800 dark:text-orange-200 hover:bg-orange-100 dark:hover:bg-orange-950/50 hover:border-orange-200 dark:hover:border-orange-800">Login</a>
+            
+            <div class="flex gap-3 justify-center pt-4">
+                <!-- Fixed Mobile Menu Theme Toggle -->
+                <button @click="darkMode = !darkMode" class="p-2 border rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800 flex items-center justify-center min-w-[50px] transition focus:outline-none">
+                    <span x-text="darkMode ? '☀️' : '🌙'"></span>
+                </button>
+                <button @click="dir = (dir === 'ltr' ? 'rtl' : 'ltr'); localStorage.setItem('dir', dir); window.location.reload()" class="p-2 border rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800 transition">
+                    <span x-text="dir === 'ltr' ? 'RTL' : 'LTR'"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<script>
+    // Execute immediately before the page renders to avoid white flashes
+    if (localStorage.getItem('dark') === 'true' || (!('dark' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+</script>
+<!-- Pricing Page Hero Section -->
+<section class="relative py-16 sm:py-20 md:py-28 bg-stone-50 dark:bg-stone-950 transition-colors duration-300 overflow-hidden">
+    
+    <!-- Subtle Background Ambient Element (Stays single-color/monochrome accent) -->
+    <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-amber-700/5 blur-[120px] pointer-events-none rounded-full"></div>
+
+    <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+        
+        <!-- Section Badge Tag -->
+        <span class="inline-flex items-center px-3 py-1 text-xs font-semibold uppercase tracking-widest text-amber-700 bg-amber-700/10 dark:bg-amber-700/20 rounded-full mb-4 animate-fade-in">
+            Transparent Plans
+        </span>
+        
+        <!-- Primary Hero Title -->
+        <h1 class="text-3xl sm:text-5xl md:text-6xl font-semibold tracking-tight text-stone-900 dark:text-stone-50 mb-4 sm:mb-6 leading-tight max-w-3xl mx-auto">
+            Predictable Pricing <br class="hidden sm:inline">Built for Every Baker.
+        </h1>
+        
+        <!-- Sub-text / Description Layer -->
+        <p class="text-sm sm:text-base md:text-lg font-normal text-stone-500 dark:text-stone-400 max-w-xl mx-auto leading-relaxed mb-8 sm:mb-12">
+            Choose a plan that scales with your baking volume. From fresh home starters to daily commercial automated flour accounts, we have you covered.
+        </p>
+
+        
+
+    </div>
+</section>
+<section class="py-16 md:py-24 bg-stone-50 dark:bg-stone-950" x-data="{ billing: 'monthly' }">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header & Toggle -->
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-semibold text-stone-900 dark:text-stone-50 mb-6">Simple, Transparent Pricing</h2>
+            
+            <!-- Toggle Switch -->
+            <div class="flex items-center justify-center gap-4">
+                <span class="text-sm font-medium" :class="billing === 'monthly' ? 'text-amber-700' : 'text-stone-500'">Monthly</span>
+                <button @click="billing = (billing === 'monthly' ? 'yearly' : 'monthly')" class="w-14 h-7 bg-stone-200 dark:bg-stone-700 rounded-full p-1 transition-all">
+                    <div class="w-5 h-5 bg-amber-700 rounded-full transition-all" :class="billing === 'yearly' ? 'translate-x-7' : 'translate-x-0'"></div>
+                </button>
+                <span class="text-sm font-medium" :class="billing === 'yearly' ? 'text-amber-700' : 'text-stone-500'">Yearly <span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full ml-1">Save 20%</span></span>
+            </div>
+        </div>
+
+        <!-- Pricing Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            <!-- Starter Plan -->
+            <div class="p-8 bg-white dark:bg-stone-900 rounded-2xl border border-stone-200 dark:border-stone-800 flex flex-col">
+                <h3 class="text-lg font-semibold mb-2">Starter</h3>
+                <div class="text-4xl font-bold mb-6">
+                    <span x-text="billing === 'monthly' ? '$29' : '$23'"></span>
+                    <span class="text-lg font-normal text-stone-500">/mo</span>
+                </div>
+                <ul class="space-y-4 mb-8 flex-grow text-stone-600 dark:text-stone-400">
+                    <li>✓ 1 Sourdough Starter</li>
+                    <li>✓ Basic Baking Guide</li>
+                    <li>✓ Email Support</li>
+                </ul>
+                <button class="w-full py-3 border border-amber-700 text-amber-700 rounded-lg hover:bg-amber-700 hover:text-white transition">Choose Plan</button>
+            </div>
+
+            <!-- Pro Plan (Highlighted) -->
+            <div class="p-8 bg-stone-900 dark:bg-amber-800 rounded-2xl text-white relative flex flex-col shadow-xl">
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-amber-700 text-white text-xs px-3 py-1 rounded-full">POPULAR</div>
+                <h3 class="text-lg font-semibold mb-2">Artisan Pro</h3>
+                <div class="text-4xl font-bold mb-6">
+                    <span x-text="billing === 'monthly' ? '$59' : '$47'"></span>
+                    <span class="text-lg font-normal text-stone-300">/mo</span>
+                </div>
+                <ul class="space-y-4 mb-8 flex-grow">
+                    <li>✓ 3 Starter Varieties</li>
+                    <li>✓ Full Video Masterclass</li>
+                    <li>✓ Priority Support</li>
+                </ul>
+                <button class="w-full py-3 bg-amber-700 hover:bg-amber-600 transition rounded-lg">Choose Plan</button>
+            </div>
+
+            <!-- Expert Plan -->
+            <div class="p-8 bg-white dark:bg-stone-900 rounded-2xl border border-stone-200 dark:border-stone-800 flex flex-col">
+                <h3 class="text-lg font-semibold mb-2">Master</h3>
+                <div class="text-4xl font-bold mb-6">
+                    <span x-text="billing === 'monthly' ? '$99' : '$79'"></span>
+                    <span class="text-lg font-normal text-stone-500">/mo</span>
+                </div>
+                <ul class="space-y-4 mb-8 flex-grow text-stone-600 dark:text-stone-400">
+                    <li>✓ All Starter Varieties</li>
+                    <li>✓ 1-on-1 Baking Coaching</li>
+                    <li>✓ Community Access</li>
+                </ul>
+                <button class="w-full py-3 border border-amber-700 text-amber-700 rounded-lg hover:bg-amber-700 hover:text-white transition">Choose Plan</button>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- What's Included Feature Comparison Section -->
+<section class="py-12 md:py-20 bg-white dark:bg-stone-900 border-t border-stone-100 dark:border-stone-800 transition-colors duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Section Header Title -->
+        <div class="text-center mb-10 md:mb-16">
+            <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-stone-900 dark:text-stone-50">
+                What’s Included
+            </h2>
+            <p class="text-xs sm:text-sm font-normal text-stone-500 dark:text-stone-400 mt-2 max-w-sm mx-auto">
+                Compare our plan features side-by-side to find your perfect baking match.
+            </p>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 1. DESKTOP & TABLET LAYOUT (>= 640px)      -->
+        <!-- ========================================== -->
+        <div class="hidden sm:block overflow-x-auto select-none">
+            <table class="w-full text-left border-collapse ltr:text-left rtl:text-right">
+                <thead>
+                    <tr class="border-b border-stone-200 dark:border-stone-800">
+                        <th class="py-5 text-sm font-semibold text-stone-400 uppercase tracking-wider w-2/5">Features</th>
+                        <th class="py-5 text-center text-sm font-semibold text-stone-900 dark:text-stone-50 w-1/5">Starter</th>
+                        <th class="py-5 text-center text-sm font-semibold text-amber-700 w-1/5">Artisan</th>
+                        <th class="py-5 text-center text-sm font-semibold text-stone-900 dark:text-stone-50 w-1/5">Master</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-stone-100 dark:divide-stone-800/50 text-sm font-normal text-stone-700 dark:text-stone-300">
+                    <!-- Row 1 -->
+                    <tr class="hover:bg-stone-50/50 dark:hover:bg-stone-800/20 transition">
+                        <td class="py-4 font-medium text-stone-900 dark:text-stone-100">Live Starter</td>
+                        <td class="py-4 text-center text-amber-700">
+                            <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        </td>
+                        <td class="py-4 text-center text-amber-700">
+                            <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        </td>
+                        <td class="py-4 text-center text-amber-700">
+                            <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        </td>
+                    </tr>
+                    <!-- Row 2 -->
+                    <tr class="hover:bg-stone-50/50 dark:hover:bg-stone-800/20 transition">
+                        <td class="py-4 font-medium text-stone-900 dark:text-stone-100">Organic Flour</td>
+                        <td class="py-4 text-center text-stone-300 dark:text-stone-700">—</td>
+                        <td class="py-4 text-center text-amber-700">
+                            <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        </td>
+                        <td class="py-4 text-center text-amber-700">
+                            <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        </td>
+                    </tr>
+                    <!-- Row 3 -->
+                    <tr class="hover:bg-stone-50/50 dark:hover:bg-stone-800/20 transition">
+                        <td class="py-4 font-medium text-stone-900 dark:text-stone-100">Baking Tools</td>
+                        <td class="py-4 text-center text-stone-300 dark:text-stone-700">—</td>
+                        <td class="py-4 text-center text-amber-700">
+                            <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        </td>
+                        <td class="py-4 text-center text-amber-700">
+                            <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        </td>
+                    </tr>
+                    <!-- Row 4 -->
+                    <tr class="hover:bg-stone-50/50 dark:hover:bg-stone-800/20 transition">
+                        <td class="py-4 font-medium text-stone-900 dark:text-stone-100">Dutch Oven</td>
+                        <td class="py-4 text-center text-stone-300 dark:text-stone-700">—</td>
+                        <td class="py-4 text-center text-stone-300 dark:text-stone-700">—</td>
+                        <td class="py-4 text-center text-amber-700">
+                            <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        </td>
+                    </tr>
+                    <!-- Row 5 -->
+                    <tr class="hover:bg-stone-50/50 dark:hover:bg-stone-800/20 transition">
+                        <td class="py-4 font-medium text-stone-900 dark:text-stone-100">Video Lessons</td>
+                        <td class="py-4 text-center text-amber-700">
+                            <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        </td>
+                        <td class="py-4 text-center text-amber-700">
+                            <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        </td>
+                        <td class="py-4 text-center text-amber-700">
+                            <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        </td>
+                    </tr>
+                    <!-- Row 6 -->
+                    <tr class="hover:bg-stone-50/50 dark:hover:bg-stone-800/20 transition">
+                        <td class="py-4 font-medium text-stone-900 dark:text-stone-100">VIP Community</td>
+                        <td class="py-4 text-center text-stone-300 dark:text-stone-700">—</td>
+                        <td class="py-4 text-center text-stone-300 dark:text-stone-700">—</td>
+                        <td class="py-4 text-center text-amber-700">
+                            <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 2. MOBILE RESPONSIVE LAYOUT (< 640px)      -->
+        <!-- ========================================== -->
+        <div class="block sm:hidden space-y-6">
+            <!-- Dynamic Accordion / Switch Stack for 360px Views -->
+            <div class="space-y-4" x-data="{ activeMobileTab: 'artisan' }">
+                
+                <!-- Mobile Tab Selector Buttons Grid -->
+                <div class="grid grid-cols-3 gap-2 p-1 bg-stone-100 dark:bg-stone-800 rounded-xl text-xs font-semibold">
+                    <button @click="activeMobileTab = 'starter'" :class="activeMobileTab === 'starter' ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-50 shadow-sm' : 'text-stone-500'" class="py-2.5 rounded-lg transition focus:outline-none">Starter</button>
+                    <button @click="activeMobileTab = 'artisan'" :class="activeMobileTab === 'artisan' ? 'bg-amber-700 text-white shadow-sm' : 'text-stone-500'" class="py-2.5 rounded-lg transition focus:outline-none">Artisan</button>
+                    <button @click="activeMobileTab = 'master'" :class="activeMobileTab === 'master' ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-50 shadow-sm' : 'text-stone-500'" class="py-2.5 rounded-lg transition focus:outline-none">Master</button>
+                </div>
+
+                <!-- Feature Performance Card Block container -->
+                <div class="border border-stone-200 dark:border-stone-800 rounded-2xl p-5 bg-stone-50/50 dark:bg-stone-950/20 divide-y divide-stone-200/60 dark:divide-stone-800 text-sm">
+                    
+                    <!-- Feature Item Loop 1 -->
+                    <div class="flex justify-between items-center py-3">
+                        <span class="font-medium text-stone-600 dark:text-stone-400">Live Starter</span>
+                        <span class="text-amber-700">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        </span>
+                    </div>
+
+                    <!-- Feature Item Loop 2 -->
+                    <div class="flex justify-between items-center py-3">
+                        <span class="font-medium text-stone-600 dark:text-stone-400">Organic Flour</span>
+                        <template x-if="activeMobileTab === 'starter'">
+                            <span class="text-stone-300 dark:text-stone-700 font-normal">—</span>
+                        </template>
+                        <template x-if="activeMobileTab !== 'starter'">
+                            <span class="text-amber-700"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span>
+                        </template>
+                    </div>
+
+                    <!-- Feature Item Loop 3 -->
+                    <div class="flex justify-between items-center py-3">
+                        <span class="font-medium text-stone-600 dark:text-stone-400">Baking Tools</span>
+                        <template x-if="activeMobileTab === 'starter'">
+                            <span class="text-stone-300 dark:text-stone-700 font-normal">—</span>
+                        </template>
+                        <template x-if="activeMobileTab !== 'starter'">
+                            <span class="text-amber-700"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span>
+                        </template>
+                    </div>
+
+                    <!-- Feature Item Loop 4 -->
+                    <div class="flex justify-between items-center py-3">
+                        <span class="font-medium text-stone-600 dark:text-stone-400">Dutch Oven</span>
+                        <template x-if="activeMobileTab === 'master'">
+                            <span class="text-amber-700"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span>
+                        </template>
+                        <template x-if="activeMobileTab !== 'master'">
+                            <span class="text-stone-300 dark:text-stone-700 font-normal">—</span>
+                        </template>
+                    </div>
+
+                    <!-- Feature Item Loop 5 -->
+                    <div class="flex justify-between items-center py-3">
+                        <span class="font-medium text-stone-600 dark:text-stone-400">Video Lessons</span>
+                        <span class="text-amber-700">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        </span>
+                    </div>
+
+                    <!-- Feature Item Loop 6 -->
+                    <div class="flex justify-between items-center py-3">
+                        <span class="font-medium text-stone-600 dark:text-stone-400">VIP Community</span>
+                        <template x-if="activeMobileTab === 'master'">
+                            <span class="text-amber-700"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span>
+                        </template>
+                        <template x-if="activeMobileTab !== 'master'">
+                            <span class="text-stone-300 dark:text-stone-700 font-normal">—</span>
+                        </template>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+<!-- Build Your Own Bread Kit Configurator Section -->
+<section class="py-12 md:py-20 bg-stone-50 dark:bg-stone-950 transition-colors duration-300"
+         x-data="{
+             flourPrice: 12,
+             flourName: 'White Organic Flour',
+             hydrationPrice: 14,
+             hydrationName: 'Premium Glass Jar',
+             scoringPrice: 18,
+             scoringName: 'Professional UFO Lame',
+             containerPrice: 15,
+             containerName: 'Rattan Banneton Basket',
+             addons: [],
+             basePrice: 0,
+             successBanner: false,
+             get total() {
+                 let addonSum = this.addons.reduce((sum, item) => sum + item.price, 0);
+                 return this.flourPrice + this.hydrationPrice + this.scoringPrice + this.containerPrice + addonSum;
+             },
+             toggleAddon(name, price) {
+                 let idx = this.addons.findIndex(a => a.name === name);
+                 if (idx > -1) {
+                     this.addons.splice(idx, 1);
+                 } else {
+                     this.addons.push({ name: name, price: price });
+                 }
+             }
+         }">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Section Header Title Block -->
+        <div class="text-center mb-12">
+            <span class="text-xs font-semibold uppercase tracking-widest text-amber-700 block mb-2">Custom Package</span>
+            <h2 class="text-3xl sm:text-4xl font-semibold tracking-tight text-stone-900 dark:text-stone-50">Build Your Own Bread Kit</h2>
+            <p class="text-sm font-normal text-stone-500 dark:text-stone-400 mt-2 max-w-md mx-auto">Select your preferred tools and ingredients below to handcraft a personalized baking bundle.</p>
+        </div>
+
+        <!-- Master Responsive Workspace Split -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- LEFT WORKSPACE AREA: Configuration Steps (Spans 7 Columns) -->
+            <div class="lg:col-span-7 space-y-8">
+                
+                <!-- STEP 1: FLOUR TYPE -->
+                <div class="bg-white dark:bg-stone-900 p-6 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-sm">
+                    <h3 class="text-base font-semibold text-stone-900 dark:text-stone-50 mb-4 flex items-center gap-2">
+                        <span class="w-5 h-5 rounded-full bg-amber-700/10 text-amber-700 text-xs flex items-center justify-center font-bold">1</span>
+                        Choose Your Flour Type
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <label class="border rounded-xl p-4 flex flex-col justify-between gap-4 cursor-pointer transition select-none"
+                               :class="flourPrice === 12 ? 'border-amber-700 bg-amber-700/[0.02]' : 'border-stone-200 dark:border-stone-800 hover:border-stone-300'">
+                            <input type="radio" name="flour" class="sr-only" @change="flourPrice = 12; flourName = 'White Organic Flour'" checked>
+                            <span class="text-sm font-semibold text-stone-900 dark:text-stone-50">White Organic</span>
+                            <span class="text-xs font-normal text-amber-700">$12.00</span>
+                        </label>
+                        <label class="border rounded-xl p-4 flex flex-col justify-between gap-4 cursor-pointer transition select-none"
+                               :class="flourPrice === 14 ? 'border-amber-700 bg-amber-700/[0.02]' : 'border-stone-200 dark:border-stone-800 hover:border-stone-300'">
+                            <input type="radio" name="flour" class="sr-only" @change="flourPrice = 14; flourName = 'Whole Wheat Flour'">
+                            <span class="text-sm font-semibold text-stone-900 dark:text-stone-50">Whole Wheat</span>
+                            <span class="text-xs font-normal text-amber-700">$14.00</span>
+                        </label>
+                        <label class="border rounded-xl p-4 flex flex-col justify-between gap-4 cursor-pointer transition select-none"
+                               :class="flourPrice === 16 ? 'border-amber-700 bg-amber-700/[0.02]' : 'border-stone-200 dark:border-stone-800 hover:border-stone-300'">
+                            <input type="radio" name="flour" class="sr-only" @change="flourPrice = 16; flourName = 'Heritage Rye Flour'">
+                            <span class="text-sm font-semibold text-stone-900 dark:text-stone-50">Heritage Rye</span>
+                            <span class="text-xs font-normal text-amber-700">$16.00</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- STEP 2: HYDRATION TOOLS -->
+                <div class="bg-white dark:bg-stone-900 p-6 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-sm">
+                    <h3 class="text-base font-semibold text-stone-900 dark:text-stone-50 mb-4 flex items-center gap-2">
+                        <span class="w-5 h-5 rounded-full bg-amber-700/10 text-amber-700 text-xs flex items-center justify-center font-bold">2</span>
+                        Select Hydration Tool
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <label class="border rounded-xl p-4 flex justify-between items-center cursor-pointer transition select-none"
+                               :class="hydrationPrice === 6 ? 'border-amber-700 bg-amber-700/[0.02]' : 'border-stone-200 dark:border-stone-800 hover:border-stone-300'">
+                            <input type="radio" name="hydration" class="sr-only" @change="hydrationPrice = 6; hydrationName = 'Plastic Beaker'">
+                            <div class="flex flex-col"><span class="text-sm font-semibold text-stone-900 dark:text-stone-50">Plastic Beaker</span><span class="text-xs font-normal text-stone-400">Lightweight setup</span></div>
+                            <span class="text-sm font-semibold text-amber-700">$6.00</span>
+                        </label>
+                        <label class="border rounded-xl p-4 flex justify-between items-center cursor-pointer transition select-none"
+                               :class="hydrationPrice === 14 ? 'border-amber-700 bg-amber-700/[0.02]' : 'border-stone-200 dark:border-stone-800 hover:border-stone-300'">
+                            <input type="radio" name="hydration" class="sr-only" @change="hydrationPrice = 14; hydrationName = 'Premium Glass Jar'" checked>
+                            <div class="flex flex-col"><span class="text-sm font-semibold text-stone-900 dark:text-stone-50">Glass Borosilicate Jar</span><span class="text-xs font-normal text-stone-400">Heat-resistant glass</span></div>
+                            <span class="text-sm font-semibold text-amber-700">$14.00</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- STEP 3: SCORING TOOLS -->
+                <div class="bg-white dark:bg-stone-900 p-6 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-sm">
+                    <h3 class="text-base font-semibold text-stone-900 dark:text-stone-50 mb-4 flex items-center gap-2">
+                        <span class="w-5 h-5 rounded-full bg-amber-700/10 text-amber-700 text-xs flex items-center justify-center font-bold">3</span>
+                        Select Scoring Lame
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <label class="border rounded-xl p-4 flex justify-between items-center cursor-pointer transition select-none"
+                               :class="scoringPrice === 10 ? 'border-amber-700 bg-amber-700/[0.02]' : 'border-stone-200 dark:border-stone-800 hover:border-stone-300'">
+                            <input type="radio" name="scoring" class="sr-only" @change="scoringPrice = 10; scoringName = 'Wooden Lame'">
+                            <span class="text-sm font-semibold text-stone-900 dark:text-stone-50">Standard Wooden Lame</span>
+                            <span class="text-sm font-semibold text-amber-700">$10.00</span>
+                        </label>
+                        <label class="border rounded-xl p-4 flex justify-between items-center cursor-pointer transition select-none"
+                               :class="scoringPrice === 18 ? 'border-amber-700 bg-amber-700/[0.02]' : 'border-stone-200 dark:border-stone-800 hover:border-stone-300'">
+                            <input type="radio" name="scoring" class="sr-only" @change="scoringPrice = 18; scoringName = 'Professional UFO Lame'" checked>
+                            <span class="text-sm font-semibold text-stone-900 dark:text-stone-50">Professional Stainless UFO Lame</span>
+                            <span class="text-sm font-semibold text-amber-700">$18.00</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- STEP 4: FERMENTATION CONTAINERS -->
+                <div class="bg-white dark:bg-stone-900 p-6 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-sm">
+                    <h3 class="text-base font-semibold text-stone-900 dark:text-stone-50 mb-4 flex items-center gap-2">
+                        <span class="w-5 h-5 rounded-full bg-amber-700/10 text-amber-700 text-xs flex items-center justify-center font-bold">4</span>
+                        Select Proofing Container
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <label class="border rounded-xl p-4 flex justify-between items-center cursor-pointer transition select-none"
+                               :class="containerPrice === 15 ? 'border-amber-700 bg-amber-700/[0.02]' : 'border-stone-200 dark:border-stone-800 hover:border-stone-300'">
+                            <input type="radio" name="container" class="sr-only" @change="containerPrice = 15; containerName = 'Rattan Banneton Basket'" checked>
+                            <span class="text-sm font-semibold text-stone-900 dark:text-stone-50">Rattan Banneton Basket</span>
+                            <span class="text-sm font-semibold text-amber-700">$15.00</span>
+                        </label>
+                        <label class="border rounded-xl p-4 flex justify-between items-center cursor-pointer transition select-none"
+                               :class="containerPrice === 22 ? 'border-amber-700 bg-amber-700/[0.02]' : 'border-stone-200 dark:border-stone-800 hover:border-stone-300'">
+                            <input type="radio" name="container" class="sr-only" @change="containerPrice = 22; containerName = 'Silicone Proofing Bowl'">
+                            <span class="text-sm font-semibold text-stone-900 dark:text-stone-50">Silicone Collapsible Bowl</span>
+                            <span class="text-sm font-semibold text-amber-700">$22.00</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- STEP 5: ADD-ONS -->
+                <div class="bg-white dark:bg-stone-900 p-6 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-sm">
+                    <h3 class="text-base font-semibold text-stone-900 dark:text-stone-50 mb-4 flex items-center gap-2">
+                        <span class="w-5 h-5 rounded-full bg-amber-700/10 text-amber-700 text-xs flex items-center justify-center font-bold">5</span>
+                        Optional Upgrade Add-ons
+                    </h3>
+                    <div class="space-y-2.5">
+                        <label class="border rounded-xl p-4 flex items-center gap-3 cursor-pointer transition select-none"
+                               :class="addons.some(a => a.name === 'Sourdough Starter Flakes') ? 'border-amber-700 bg-amber-700/[0.01]' : 'border-stone-200 dark:border-stone-800 hover:border-stone-300'">
+                            <input type="checkbox" class="w-4 h-4 rounded text-amber-700 accent-amber-700 focus:ring-0" @change="toggleAddon('Sourdough Starter Flakes', 8)">
+                            <div class="flex-grow flex justify-between items-center"><span class="text-sm font-medium text-stone-700 dark:text-stone-300">Organic Sourdough Starter Flakes</span><span class="text-sm font-semibold text-amber-700">+$8.00</span></div>
+                        </label>
+                        <label class="border rounded-xl p-4 flex items-center gap-3 cursor-pointer transition select-none"
+                               :class="addons.some(a => a.name === 'Digital Precision Scale') ? 'border-amber-700 bg-amber-700/[0.01]' : 'border-stone-200 dark:border-stone-800 hover:border-stone-300'">
+                            <input type="checkbox" class="w-4 h-4 rounded text-amber-700 accent-amber-700 focus:ring-0" @change="toggleAddon('Digital Precision Scale', 25)">
+                            <div class="flex-grow flex justify-between items-center"><span class="text-sm font-medium text-stone-700 dark:text-stone-300">Digital Precision Kitchen Scale</span><span class="text-sm font-semibold text-amber-700">+$25.00</span></div>
+                        </label>
+                        <label class="border rounded-xl p-4 flex items-center gap-3 cursor-pointer transition select-none"
+                               :class="addons.some(a => a.name === 'Cast Iron Dutch Oven') ? 'border-amber-700 bg-amber-700/[0.01]' : 'border-stone-200 dark:border-stone-800 hover:border-stone-300'">
+                            <input type="checkbox" class="w-4 h-4 rounded text-amber-700 accent-amber-700 focus:ring-0" @change="toggleAddon('Cast Iron Dutch Oven', 65)">
+                            <div class="flex-grow flex justify-between items-center"><span class="text-sm font-medium text-stone-700 dark:text-stone-300">Heavy Cast Iron Dutch Oven</span><span class="text-sm font-semibold text-amber-700">+$65.00</span></div>
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT WORKSPACE AREA: Dynamic Sticky Pricing Summary (Spans 5 Columns) -->
+            <div class="lg:col-span-5 lg:sticky lg:top-6">
+                <div class="bg-white dark:bg-stone-900 p-6 sm:p-8 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-md">
+                    <h3 class="text-lg font-semibold text-stone-900 dark:text-stone-50 border-b border-stone-100 dark:border-stone-800 pb-4 mb-4">
+                        Kit Summary
+                    </h3>
+                    
+                    <!-- Dynamic Component Tracking List -->
+                    <ul class="space-y-3 text-sm font-normal text-stone-600 dark:text-stone-400 mb-6">
+                        <li class="flex justify-between"><span x-text="flourName"></span><span class="font-semibold text-stone-900 dark:text-stone-100" x-text="'$'+flourPrice+'.00'"></span></li>
+                        <li class="flex justify-between"><span x-text="hydrationName"></span><span class="font-semibold text-stone-900 dark:text-stone-100" x-text="'$'+hydrationPrice+'.00'"></span></li>
+                        <li class="flex justify-between"><span x-text="scoringName"></span><span class="font-semibold text-stone-900 dark:text-stone-100" x-text="'$'+scoringPrice+'.00'"></span></li>
+                        <li class="flex justify-between"><span x-text="containerName"></span><span class="font-semibold text-stone-900 dark:text-stone-100" x-text="'$'+containerPrice+'.00'"></span></li>
+                        
+                        <!-- Dynamic Addon Render Block loops -->
+                        <template x-for="item in addons" :key="item.name">
+                            <li class="flex justify-between border-t border-stone-100/60 dark:border-stone-800/60 pt-2 text-xs">
+                                <span x-text="item.name"></span>
+                                <span class="font-semibold text-stone-900 dark:text-stone-100" x-text="'$'+item.price+'.00'"></span>
+                            </li>
+                        </template>
+                    </ul>
+
+                    <!-- Running Price Aggregation Totals -->
+                    <div class="border-t border-stone-200 dark:border-stone-800 pt-4 mb-6 flex justify-between items-baseline select-none">
+                        <span class="text-sm font-semibold text-stone-900 dark:text-stone-50">Estimated Total:</span>
+                        <span class="text-3xl font-bold text-amber-700 tracking-tight" x-text="'$'+total+'.00'">$0.00</span>
+                    </div>
+
+                    <!-- CTA Submission Trigger Box -->
+                    <button type="button" 
+                            @click="successBanner = true"
+                            class="w-full py-4 bg-amber-700 hover:bg-amber-800 text-white font-semibold rounded-xl active:scale-95 transition-all duration-200 shadow-md hover:shadow-lg text-sm text-center">
+                        Create My Kit
+                    </button>
+
+                    <!-- Success Notification Confirmation Inline Toast overlay -->
+                    <div x-show="successBanner" x-cloak x-transition.opacity class="mt-4 p-4 bg-stone-900 dark:bg-stone-50 text-white dark:text-stone-950 rounded-xl text-xs font-normal text-center leading-relaxed">
+                        ✓ Custom build configurations dispatched to system cart.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<!-- FAQ Section Accordion Component Section -->
+<section class="py-12 md:py-20 bg-white dark:bg-stone-900 border-t border-stone-100 dark:border-stone-800 transition-colors duration-300">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Section Header Title -->
+        <div class="text-center mb-10 md:mb-16">
+            <span class="text-xs font-semibold uppercase tracking-widest text-amber-700 block mb-2">Common Questions</span>
+            <h2 class="text-3xl font-semibold tracking-tight text-stone-900 dark:text-stone-50">
+                Frequently Asked Questions
+            </h2>
+            <p class="text-sm font-normal text-stone-500 dark:text-stone-400 mt-2">
+                Everything you need to know about our active starters, baking kits, and raw ingredient delivery subscriptions.
+            </p>
+        </div>
+
+        <!-- Interactive Accordion Stack Container Block (Alpine.js Local Tracking) -->
+        <div class="space-y-4" x-data="{ activeFaq: null }">
+            
+            <!-- PANEL 1: STARTER ACTIVATION -->
+            <div class="border border-stone-200 dark:border-stone-800 rounded-2xl bg-stone-50/50 dark:bg-stone-950/20 overflow-hidden transition">
+                <button type="button" 
+                        @click="activeFaq = (activeFaq === 1 ? null : 1)"
+                        class="w-full px-5 py-4 flex justify-between items-center text-left ltr:text-left rtl:text-right font-semibold text-sm sm:text-base text-stone-900 dark:text-stone-50 focus:outline-none select-none">
+                    <span>How long does starter activation take?</span>
+                    <!-- Icon turns into single-color pop when active panel is shown -->
+                    <svg class="w-5 h-5 shrink-0 transition-transform duration-200" 
+                         :class="activeFaq === 1 ? 'transform rotate-180 text-amber-700' : 'text-stone-400'"
+                         fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+                <div x-show="activeFaq === 1" 
+                     x-cloak 
+                     x-collapse
+                     class="px-5 pb-5 text-xs sm:text-sm font-normal text-stone-600 dark:text-stone-400 leading-relaxed border-t border-stone-100 dark:border-stone-800/60 pt-3">
+                    Our dehydrated sourdough flakes typically reactivate fully within 3 to 5 days of regular feeding cycles. We include a comprehensive step-by-step activation calendar schedule with every single delivery box to guide you through hydration ratios.
+                </div>
+            </div>
+
+            <!-- PANEL 2: ORGANIC FLOUR -->
+            <div class="border border-stone-200 dark:border-stone-800 rounded-2xl bg-stone-50/50 dark:bg-stone-950/20 overflow-hidden transition">
+                <button type="button" 
+                        @click="activeFaq = (activeFaq === 2 ? null : 2)"
+                        class="w-full px-5 py-4 flex justify-between items-center text-left ltr:text-left rtl:text-right font-semibold text-sm sm:text-base text-stone-900 dark:text-stone-50 focus:outline-none select-none">
+                    <span>Are your flours organic?</span>
+                    <svg class="w-5 h-5 shrink-0 transition-transform duration-200" 
+                         :class="activeFaq === 2 ? 'transform rotate-180 text-amber-700' : 'text-stone-400'"
+                         fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+                <div x-show="activeFaq === 2" x-cloak x-collapse class="px-5 pb-5 text-xs sm:text-sm font-normal text-stone-600 dark:text-stone-400 leading-relaxed border-t border-stone-100 dark:border-stone-800/60 pt-3">
+                    Yes, 100% of our premium baking flours are strictly certified organic, locally unbleached, and stone-milled to maximize grain integrity. We do not incorporate preservatives, additives, or synthetic enrichment minerals into our flour bags.
+                </div>
+            </div>
+
+            <!-- PANEL 3: BEGINNER EQUIPMENT -->
+            <div class="border border-stone-200 dark:border-stone-800 rounded-2xl bg-stone-50/50 dark:bg-stone-950/20 overflow-hidden transition">
+                <button type="button" 
+                        @click="activeFaq = (activeFaq === 3 ? null : 3)"
+                        class="w-full px-5 py-4 flex justify-between items-center text-left ltr:text-left rtl:text-right font-semibold text-sm sm:text-base text-stone-900 dark:text-stone-50 focus:outline-none select-none">
+                    <span>Do beginners need special equipment?</span>
+                    <svg class="w-5 h-5 shrink-0 transition-transform duration-200" 
+                         :class="activeFaq === 3 ? 'transform rotate-180 text-amber-700' : 'text-stone-400'"
+                         fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+                <div x-show="activeFaq === 3" x-cloak x-collapse class="px-5 pb-5 text-xs sm:text-sm font-normal text-stone-600 dark:text-stone-400 leading-relaxed border-t border-stone-100 dark:border-stone-800/60 pt-3">
+                    Not at all. While specialized items like a scoring lame and rattan proofing bannetons help elevate crust design, you can easily bake your first artisan loaf using a standard kitchen mixing bowl, a standard glass jar, and a heavy covered household pot or baking sheet.
+                </div>
+            </div>
+
+            <!-- PANEL 4: SUBSCRIPTION SHIPPING -->
+            <div class="border border-stone-200 dark:border-stone-800 rounded-2xl bg-stone-50/50 dark:bg-stone-950/20 overflow-hidden transition">
+                <button type="button" 
+                        @click="activeFaq = (activeFaq === 4 ? null : 4)"
+                        class="w-full px-5 py-4 flex justify-between items-center text-left ltr:text-left rtl:text-right font-semibold text-sm sm:text-base text-stone-900 dark:text-stone-50 focus:outline-none select-none">
+                    <span>How are subscriptions shipped?</span>
+                    <svg class="w-5 h-5 shrink-0 transition-transform duration-200" 
+                         :class="activeFaq === 4 ? 'transform rotate-180 text-amber-700' : 'text-stone-400'"
+                         fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+                <div x-show="activeFaq === 4" x-cloak x-collapse class="px-5 pb-5 text-xs sm:text-sm font-normal text-stone-600 dark:text-stone-400 leading-relaxed border-t border-stone-100 dark:border-stone-800/60 pt-3">
+                    All recurring flour and fresh starter subscription boxes are packed in climate-controlled, eco-friendly insulated boxes. They are dispatched via carbon-neutral shipping services on the first Tuesday of every month to guarantee maximum kitchen freshness.
+                </div>
+            </div>
+
+            <!-- PANEL 5: PAUSE SUBSCRIPTION -->
+            <div class="border border-stone-200 dark:border-stone-800 rounded-2xl bg-stone-50/50 dark:bg-stone-950/20 overflow-hidden transition">
+                <button type="button" 
+                        @click="activeFaq = (activeFaq === 5 ? null : 5)"
+                        class="w-full px-5 py-4 flex justify-between items-center text-left ltr:text-left rtl:text-right font-semibold text-sm sm:text-base text-stone-900 dark:text-stone-50 focus:outline-none select-none">
+                    <span>Can I pause my subscription?</span>
+                    <svg class="w-5 h-5 shrink-0 transition-transform duration-200" 
+                         :class="activeFaq === 5 ? 'transform rotate-180 text-amber-700' : 'text-stone-400'"
+                         fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+                <div x-show="activeFaq === 5" x-cloak x-collapse class="px-5 pb-5 text-xs sm:text-sm font-normal text-stone-600 dark:text-stone-400 leading-relaxed border-t border-stone-100 dark:border-stone-800/60 pt-3">
+                    Yes, absolutely. You can pause, skip a delivery month, or cancel your baking supply subscription entirely at any point with no hidden fees. Simply adjust your shipment dates through your personalized digital user profile before the monthly cutting deadline.
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+  <footer class="border-t border-stone-200 dark:border-stone-800 mt-20 py-12 bg-stone-50 dark:bg-stone-950">
+    <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-4 gap-12">
+        
+        <!-- Branding & Socials -->
+        <div class="space-y-4">
+         <a href="index.html" class="flex items-center gap-2 group">
+    <!-- Logo Box -->
+    <div class="w-8 h-8 bg-amber-700 text-white flex items-center justify-center rounded-lg group-hover:scale-105 transition-transform duration-300">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2C8.686 2 6 4.686 6 8c0 1.93.89 3.65 2.29 4.77C7.38 13.9 6.7 15.2 6.7 16.6c0 2.98 2.42 5.4 5.4 5.4s5.4-2.42 5.4-5.4c0-1.4-.68-2.7-1.59-3.83C17.11 11.65 18 9.93 18 8c0-3.314-2.686-6-6-6z"/>
+        </svg>
+    </div>
+    
+    <!-- Name -->
+    <span class="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-50 group-hover:text-amber-700 transition-colors">Sourdough</span>
+</a>
+            
+            <!-- Real World Social Icons -->
+          <div class="flex gap-4">
+    <!-- Instagram -->
+    <a href="#" class="text-stone-500 hover:text-pink-600 transition-colors duration-300">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.77 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+        </svg>
+    </a>
+
+    <!-- Twitter/X -->
+    <a href="#" class="text-stone-500 hover:text-blue-600 transition-colors duration-300">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+        </svg>
+    </a>
+
+    <!-- Facebook -->
+    <a href="#" class="text-stone-500 hover:text-blue-800 transition-colors duration-300">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+        </svg>
+    </a>
+</div>
+        </div>
+
+        <!-- Column 1: Quick Links -->
+        <div>
+            <h3 class="font-semibold mb-4 text-stone-900 dark:text-white">Quick Links</h3>
+            <ul class="space-y-2 text-sm text-stone-600 dark:text-stone-400">
+                <li><a href="index.html" class="hover:text-amber-700 transition">Home</a></li>
+                <li><a href="home2.html" class="hover:text-amber-700 transition">Home 2</a></li>
+                <li><a href="abouts.html" class="hover:text-amber-700 transition">About Us</a></li>
+                <li><a href="services.html" class="hover:text-amber-700 transition">Services</a></li>
+                <li><a href="contact.html" class="hover:text-amber-700 transition">Contact</a></li>
+            </ul>
+        </div>
+
+        <!-- Column 2: Navigation -->
+        <div>
+            <h3 class="font-semibold mb-4 text-stone-900 dark:text-white">Navigation</h3>
+            <ul class="space-y-2 text-sm text-stone-600 dark:text-stone-400">
+                <li><a href="booknow.html" class="hover:text-amber-700 transition">Book Now</a></li>
+                <li><a href="pricing.html" class="hover:text-amber-700 transition">Pricing</a></li>
+                <li><a href="gallery.html" class="hover:text-amber-700 transition">Gallery</a></li>
+                <li><a href="404.html" class="hover:text-amber-700 transition">404 Page</a></li>
+                <li><a href="comingsoon.html" class="hover:text-amber-700 transition">Coming Soon</a></li>
+            </ul>
+        </div>
+
+        <!-- Newsletter -->
+        <div>
+            <h3 class="font-semibold mb-4 text-stone-900 dark:text-white">Newsletter</h3>
+            <p class="text-sm text-stone-500 mb-4">Get the latest baking tips directly to your inbox.</p>
+            <div class="flex flex-col gap-2">
+                <input type="email" placeholder="Email address" class="w-full p-2 border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 rounded focus:ring-2 focus:ring-amber-700 outline-none transition-all">
+                <button class="w-full py-2 bg-amber-700 text-white font-medium rounded hover:bg-amber-800 transition-all active:scale-95">Subscribe</button>
+            </div>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>

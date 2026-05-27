@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23B45309' stroke-width='2'%3E%3Cpath d='M12 2C8.686 2 6 4.686 6 8c0 1.93.89 3.65 2.29 4.77C7.38 13.9 6.7 15.2 6.7 16.6c0 2.98 2.42 5.4 5.4 5.4s5.4-2.42 5.4-5.4c0-1.4-.68-2.7-1.59-3.83C17.11 11.65 18 9.93 18 8c0-3.314-2.686-6-6-6z'/%3E%3C/svg%3E">
+    <title>Page Not Found | Sourdough</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <script>
+        if (localStorage.getItem('dark') === 'true' || (!('dark' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        if (localStorage.getItem('dir') === 'rtl') {
+            document.documentElement.setAttribute('dir', 'rtl');
+        }
+    </script>
+</head>
+<body class="bg-stone-50 dark:bg-stone-950 text-stone-900 dark:text-stone-50 transition-colors duration-300 min-h-screen flex flex-col justify-between"
+      x-data="{ 
+          darkMode: localStorage.getItem('dark') === 'true', 
+          dir: localStorage.getItem('dir') || 'ltr'
+      }"
+      x-init="
+          $watch('darkMode', value => {
+              if (value) {
+                  document.documentElement.classList.add('dark');
+                  localStorage.setItem('dark', 'true');
+              } else {
+                  document.documentElement.classList.remove('dark');
+                  localStorage.setItem('dark', 'false');
+              }
+          });
+          $watch('dir', value => {
+              document.documentElement.setAttribute('dir', value);
+              localStorage.setItem('dir', value);
+          });
+      }">
+
+    <header class="w-full max-w-7xl mx-auto p-4 md:p-6 flex justify-between items-center relative z-50">
+        <a href="index.html" class="flex items-center gap-2 group">
+            <div class="w-8 h-8 bg-amber-700 text-white flex items-center justify-center rounded-lg group-hover:scale-105 transition-transform duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2C8.686 2 6 4.686 6 8c0 1.93.89 3.65 2.29 4.77C7.38 13.9 6.7 15.2 6.7 16.6c0 2.98 2.42 5.4 5.4 5.4s5.4-2.42 5.4-5.4c0-1.4-.68-2.7-1.59-3.83C17.11 11.65 18 9.93 18 8c0-3.314-2.686-6-6-6z"/>
+                </svg>
+            </div>
+            <span class="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-50 group-hover:text-amber-700 transition-colors">Sourdough</span>
+        </a>
+
+        <div class="flex items-center gap-2">
+            <button @click="darkMode = !darkMode" class="p-2 text-stone-600 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-800 rounded-full transition focus:outline-none" aria-label="Switch Theme">
+                <span x-text="darkMode ? '☀️' : '🌙'"></span>
+            </button>
+            
+            <button @click="dir = (dir === 'ltr' ? 'rtl' : 'ltr')" class="text-xs font-bold uppercase p-2 border border-stone-300 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-800 rounded transition focus:outline-none">
+                <span x-text="dir === 'ltr' ? 'RTL' : 'LTR'"></span>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-grow flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+        <div class="w-full max-w-md text-center transition-all duration-300">
+            
+            <div class="relative inline-block mb-4">
+                <h1 class="text-9xl font-bold tracking-tighter text-amber-700/10 dark:text-amber-700/20 select-none">
+                    404
+                </h1>
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <p class="text-xl font-semibold tracking-wide uppercase text-stone-800 dark:text-stone-200">
+                        Loaf Not Found
+                    </p>
+                </div>
+            </div>
+
+            <div class="space-y-3 mb-10">
+                <h2 class="text-2xl font-semibold tracking-tight text-stone-900 dark:text-stone-50">
+                    This page has over-proofed.
+                </h2>
+                <p class="text-sm text-stone-500 dark:text-stone-400 max-w-sm mx-auto font-normal leading-relaxed">
+                    The route you are looking for doesn't exist, has been removed, or is currently fermenting somewhere else.
+                </p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3 justify-center items-center max-w-xs mx-auto">
+                <a href="index.html" 
+                   class="w-full py-3.5 bg-amber-700 hover:bg-amber-800 text-white font-semibold rounded-xl active:scale-95 transition-all duration-200 shadow-md hover:shadow-lg text-sm text-center">
+                    Back to Home
+                </a>
+                
+                <a href="contact.html" 
+                   class="w-full py-3.5 border border-stone-300 dark:border-stone-700 hover:border-amber-700 dark:hover:border-amber-700 text-stone-700 dark:text-stone-300 hover:text-amber-700 dark:hover:text-amber-700 font-medium rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800/40 active:scale-95 transition-all duration-200 text-sm text-center">
+                    Contact Support
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="w-full py-4 text-center text-xs text-stone-400 dark:text-stone-600 font-normal">
+        &copy; 2026 Sourdough. All rights reserved.
+    </footer>
+
+</body>
+</html>

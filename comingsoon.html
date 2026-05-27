@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23B45309' stroke-width='2'%3E%3Cpath d='M12 2C8.686 2 6 4.686 6 8c0 1.93.89 3.65 2.29 4.77C7.38 13.9 6.7 15.2 6.7 16.6c0 2.98 2.42 5.4 5.4 5.4s5.4-2.42 5.4-5.4c0-1.4-.68-2.7-1.59-3.83C17.11 11.65 18 9.93 18 8c0-3.314-2.686-6-6-6z'/%3E%3C/svg%3E">
+    <title>Coming Soon | Sourdough</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <script>
+        if (localStorage.getItem('dark') === 'true' || (!('dark' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        if (localStorage.getItem('dir') === 'rtl') {
+            document.documentElement.setAttribute('dir', 'rtl');
+        }
+    </script>
+</head>
+<body class="bg-stone-50 dark:bg-stone-950 text-stone-900 dark:text-stone-50 transition-colors duration-300 min-h-screen flex flex-col justify-between"
+      x-data="{ 
+          darkMode: localStorage.getItem('dark') === 'true', 
+          dir: localStorage.getItem('dir') || 'ltr',
+          emailValue: '',
+          subscribed: false,
+          // Set countdown target date (e.g., 30 days from now)
+          expiry: new Date().getTime() + (30 * 24 * 60 * 60 * 1000),
+          days: '00', hours: '00', minutes: '00', seconds: '00',
+          initCountdown() {
+              setInterval(() => {
+                  let now = new Date().getTime();
+                  let diff = this.expiry - now;
+                  if (diff > 0) {
+                      this.days = Math.floor(diff / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
+                      this.hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+                      this.minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+                      this.seconds = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
+                  }
+              }, 1000);
+          }
+      }"
+      x-init="
+          initCountdown();
+          $watch('darkMode', value => {
+              if (value) {
+                  document.documentElement.classList.add('dark');
+                  localStorage.setItem('dark', 'true');
+              } else {
+                  document.documentElement.classList.remove('dark');
+                  localStorage.setItem('dark', 'false');
+              }
+          });
+          $watch('dir', value => {
+              document.documentElement.setAttribute('dir', value);
+              localStorage.setItem('dir', value);
+          });
+      ">
+
+    <header class="w-full max-w-7xl mx-auto p-4 md:p-6 flex justify-between items-center relative z-50">
+        <a href="index.html" class="flex items-center gap-2 group">
+            <div class="w-8 h-8 bg-amber-700 text-white flex items-center justify-center rounded-lg group-hover:scale-105 transition-transform duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2C8.686 2 6 4.686 6 8c0 1.93.89 3.65 2.29 4.77C7.38 13.9 6.7 15.2 6.7 16.6c0 2.98 2.42 5.4 5.4 5.4s5.4-2.42 5.4-5.4c0-1.4-.68-2.7-1.59-3.83C17.11 11.65 18 9.93 18 8c0-3.314-2.686-6-6-6z"/>
+                </svg>
+            </div>
+            <span class="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-50 group-hover:text-amber-700 transition-colors">Sourdough</span>
+        </a>
+
+        <div class="flex items-center gap-2">
+            <button @click="darkMode = !darkMode" class="p-2 text-stone-600 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-800 rounded-full transition focus:outline-none" aria-label="Switch Theme">
+                <span x-text="darkMode ? '☀️' : '🌙'"></span>
+            </button>
+            
+            <button @click="dir = (dir === 'ltr' ? 'rtl' : 'ltr')" class="text-xs font-bold uppercase p-2 border border-stone-300 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-800 rounded transition focus:outline-none">
+                <span x-text="dir === 'ltr' ? 'RTL' : 'LTR'"></span>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-grow flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+        <div class="w-full max-w-2xl text-center transition-all duration-300">
+            
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-amber-700 bg-amber-700/10 dark:bg-amber-700/20 rounded-full mb-6 animate-pulse">
+                • Something is Fermenting
+            </span>
+
+            <h1 class="text-4xl sm:text-6xl font-semibold tracking-tight text-stone-900 dark:text-stone-50 mb-4 leading-tight">
+                Our New Digital Bakery <br>is Rising Soon.
+            </h1>
+            
+            <p class="text-base sm:text-lg text-stone-500 dark:text-stone-400 max-w-lg mx-auto font-normal mb-12 leading-relaxed">
+                We are currently shaping a premium ecosystem for artisan bread lovers. Enter your email below to receive an exclusive opening discount.
+            </p>
+
+            <div class="grid grid-cols-4 gap-2 sm:gap-4 max-w-md mx-auto mb-12 select-none">
+                <div class="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl p-3 sm:p-4 shadow-sm">
+                    <span class="block text-2xl sm:text-4xl font-bold text-amber-700 tracking-tight" x-text="days">00</span>
+                    <span class="text-[10px] sm:text-xs font-semibold tracking-wider text-stone-400 uppercase">Days</span>
+                </div>
+                <div class="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl p-3 sm:p-4 shadow-sm">
+                    <span class="block text-2xl sm:text-4xl font-bold text-amber-700 tracking-tight" x-text="hours">00</span>
+                    <span class="text-[10px] sm:text-xs font-semibold tracking-wider text-stone-400 uppercase">Hours</span>
+                </div>
+                <div class="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl p-3 sm:p-4 shadow-sm">
+                    <span class="block text-2xl sm:text-4xl font-bold text-amber-700 tracking-tight" x-text="minutes">00</span>
+                    <span class="text-[10px] sm:text-xs font-semibold tracking-wider text-stone-400 uppercase">Mins</span>
+                </div>
+                <div class="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl p-3 sm:p-4 shadow-sm">
+                    <span class="block text-2xl sm:text-4xl font-bold text-amber-700 tracking-tight" x-text="seconds">00</span>
+                    <span class="text-[10px] sm:text-xs font-semibold tracking-wider text-stone-400 uppercase">Secs</span>
+                </div>
+            </div>
+
+            <div class="max-w-md mx-auto">
+                <div x-show="!subscribed" x-transition:enter="transition ease-out duration-200" class="relative">
+                    
+                    <div x-show="emailValue.length === 0" 
+                         class="absolute top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none flex items-center gap-2 z-10 ltr:left-4 rlt:right-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        <span class="text-sm text-stone-400/70">Join our launch updates list</span>
+                    </div>
+
+                    <form @submit.prevent="subscribed = true" class="flex flex-col sm:flex-row gap-2 relative">
+                        <input type="email" required x-model="emailValue"
+                               class="w-full py-3.5 border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-50 rounded-xl focus:outline-none focus:border-amber-700 dark:focus:border-amber-700 transition duration-200 text-sm font-normal ltr:pl-11 rtl:pr-11 sm:flex-grow">
+                        
+                        <button type="submit" 
+                                class="w-full sm:w-auto px-6 py-3.5 bg-amber-700 hover:bg-amber-800 text-white font-semibold rounded-xl active:scale-95 transition-all duration-200 shadow-md hover:shadow-lg text-sm whitespace-nowrap">
+                            Notify Me
+                        </button>
+                    </form>
+                </div>
+
+                <div x-show="subscribed" x-cloak x-transition:enter="transition ease-out duration-300" 
+                     class="p-4 bg-amber-700/10 border border-amber-700/20 text-amber-800 dark:text-amber-200 rounded-xl text-sm font-medium">
+                    ✓ Thank you! We'll send you an invitation when the starter is active.
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="w-full py-4 text-center text-xs text-stone-400 dark:text-stone-600 font-normal">
+        &copy; 2026 Sourdough. All rights reserved.
+    </footer>
+
+</body>
+</html>

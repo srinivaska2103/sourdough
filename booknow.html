@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<!-- Alpine.js Unified Persistent State Engine initialization -->
+<html lang="en" 
+      x-data="{ 
+          darkMode: localStorage.getItem('darkMode') === 'true', 
+          isRTL: localStorage.getItem('isRTL') === 'true' 
+      }"
+      x-init="
+          $watch('darkMode', val => localStorage.setItem('darkMode', val));
+          $watch('isRTL', val => localStorage.setItem('isRTL', val));
+      "
+      :class="{ 'dark': darkMode }"
+      :dir="isRTL ? 'rtl' : 'ltr'"
+      class="scroll-smooth transition-colors duration-300 w-full overflow-x-hidden">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23B45309' stroke-width='2'%3E%3Cpath d='M12 2C8.686 2 6 4.686 6 8c0 1.93.89 3.65 2.29 4.77C7.38 13.9 6.7 15.2 6.7 16.6c0 2.98 2.42 5.4 5.4 5.4s5.4-2.42 5.4-5.4c0-1.4-.68-2.7-1.59-3.83C17.11 11.65 18 9.93 18 8c0-3.314-2.686-6-6-6z'/%3E%3C/svg%3E">
+    <title>Artisan Booking Portal</title>
+    <!-- Tailwind CSS Play CDN Injection -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    screens: {
+                        'xs': '360px'
+                    },
+                    colors: {
+                        amber: { 700: '#b45309', 800: '#92400e' }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Alpine.js Core Engine via CDN -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+        /* Extra safety reset to guarantee a zero horizontal overflow footprint */
+        body { overflow-x: hidden !important; width: 100% !important; }
+    </style>
+</head>
+<body class="bg-stone-50 dark:bg-stone-950 text-stone-900 dark:text-stone-50 font-normal transition-colors duration-300 min-h-screen w-full overflow-x-hidden flex flex-col justify-between">
+
+    <!-- ========================================== -->
+    <!-- NAVIGATION BAR HEADER MODULE               -->
+    <!-- ========================================== -->
+    <nav class="sticky top-0 z-50 bg-white/80 dark:bg-stone-900/80 backdrop-blur-md border-b border-stone-200 dark:border-stone-800 transition-colors duration-300 w-full">
+        <div class="max-w-7xl mx-auto px-2 xs:px-3 sm:px-6 lg:px-8 h-16 flex justify-between items-center gap-2">
+            
+            <!-- Logo Branding (Flipped automatically via LTR/RTL dir state) -->
+            <a href="index.html" class="flex items-center gap-1.5 group focus:outline-none select-none max-w-[45%] xs:max-w-[55%] sm:max-w-none min-w-0">
+                <div class="w-7 h-7 sm:w-8 sm:h-8 bg-amber-700 text-white flex items-center justify-center rounded-lg group-hover:scale-105 transition-transform duration-300 shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2C8.686 2 6 4.686 6 8c0 1.93.89 3.65 2.29 4.77C7.38 13.9 6.7 15.2 6.7 16.6c0 2.98 2.42 5.4 5.4 5.4s5.4-2.42 5.4-5.4c0-1.4-.68-2.7-1.59-3.83C17.11 11.65 18 9.93 18 8c0-3.314-2.686-6-6-6z"/>
+                    </svg>
+                </div>
+                <span class="text-sm xs:text-base sm:text-lg font-semibold tracking-tight text-stone-900 dark:text-stone-50 truncate">
+                    Sourdough
+                </span>
+            </a>
+
+            <!-- Utilities Toggle Controls Block -->
+            <div class="flex items-center gap-1 xs:gap-1.5 border-stone-200 dark:border-stone-800 ltr:border-l rtl:border-r ltr:pl-1.5 xs:ltr:pl-2.5 sm:ltr:pl-4 rtl:pr-1.5 xs:rtl:pr-2.5 sm:rtl:pr-4 select-none shrink-0 min-w-0">
+                
+                <!-- Light / Dark Mode Toggle Button -->
+                <button @click="darkMode = !darkMode" 
+                        type="button" 
+                        class="p-1.5 sm:p-2 border border-stone-200 dark:border-stone-800 hover:border-amber-700 dark:hover:border-amber-700/60 text-stone-500 dark:text-stone-400 hover:text-amber-700 dark:hover:text-amber-700 rounded-lg transition active:scale-95 focus:outline-none shrink-0" 
+                        aria-label="Toggle Theme">
+                    <span class="text-xs sm:text-sm block leading-none" x-text="darkMode ? '☀️' : '🌙'"></span>
+                </button>
+                
+                <!-- LTR / RTL Direction Toggle Button -->
+                <button @click="isRTL = !isRTL" 
+                        type="button"
+                        class="px-1.5 py-1.5 xs:px-2 xs:py-1.5 sm:px-2.5 font-semibold border border-stone-200 dark:border-stone-800 hover:border-amber-700 dark:hover:border-amber-700/60 text-stone-600 dark:text-stone-400 hover:text-amber-700 dark:hover:text-amber-700 rounded-lg transition active:scale-95 text-[9px] xs:text-[10px] sm:text-xs tracking-wider focus:outline-none shrink-0"
+                        aria-label="Toggle Layout Direction">
+                    <span class="block leading-none" x-text="isRTL ? 'LTR' : 'RTL'"></span>
+                </button>
+                
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========================================== -->
+    <!-- MAIN PORTAL BOOKING WORKSPACE LAYOUT       -->
+    <!-- ========================================== -->
+    <main class="flex-grow py-8 md:py-16 px-3 xs:px-4 sm:px-6 lg:px-8 w-full box-border relative">
+        <!-- Ambient Background Glow Pop -->
+        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[90%] max-w-[500px] h-[400px] bg-amber-700/[0.02] dark:bg-amber-700/[0.04] blur-[100px] pointer-events-none rounded-full z-0"></div>
+
+        <div class="max-w-5xl mx-auto w-full box-border relative z-10">
+            
+            <!-- Section Title Header Block -->
+            <div class="text-center mb-8 md:mb-14 w-full">
+                <span class="text-xs font-semibold uppercase tracking-widest text-amber-700 block mb-2">Scheduling System</span>
+                <h1 class="text-2xl xs:text-3xl font-semibold tracking-tight text-stone-900 dark:text-stone-50">Book a Specialty Session</h1>
+                <p class="text-xs xs:text-sm font-normal text-stone-500 dark:text-stone-400 mt-2 max-w-sm mx-auto">Secure a verified slot for direct baking advice, custom consultations, or wholesale workspace setup.</p>
+            </div>
+
+            <!-- Master Responsive Split Form Layout Container -->
+            <form x-data = "{ service: 'workshop', stepConfirm: false }" 
+                  @submit.prevent = "stepConfirm = true"
+                  class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start w-full box-border">
+                
+                <!-- LEFT SPECIFICATION CONTAINER: Entry Input Blocks (Spans 7 Columns) -->
+                <div class="grid grid-cols-1 lg:col-span-7 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 p-4 xs:p-5 sm:p-8 rounded-2xl xs:rounded-3xl shadow-sm space-y-5 xs:space-y-6 w-full box-border">
+                    
+                    <!-- Segment 1: Pick Service Type Tier -->
+                    <div class="space-y-2 w-full">
+                        <label class="text-[11px] xs:text-xs font-semibold text-stone-400 uppercase tracking-wider block">1. Select Service Category</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
+                            <!-- Option A: Workshops -->
+                            <label :class="service === 'workshop' ? 'border-amber-700 bg-amber-700/[0.02] dark:bg-amber-700/[0.04]' : 'border-stone-200 dark:border-stone-800'" 
+                                   class="border p-3 xs:p-4 rounded-xl cursor-pointer transition flex flex-col justify-between select-none min-w-0 box-border">
+                                <input type="radio" name="service_type" value="workshop" x-model="service" class="sr-only">
+                                <span class="text-xs xs:text-sm font-semibold text-stone-900 dark:text-stone-50 block">Workshop</span>
+                                <span class="text-[10px] xs:text-[11px] font-normal text-stone-500 dark:text-stone-400 mt-1 block leading-relaxed">Live interactive group learning classes.</span>
+                            </label>
+                            <!-- Option B: Consultations -->
+                            <label :class="service === 'consult' ? 'border-amber-700 bg-amber-700/[0.02] dark:bg-amber-700/[0.04]' : 'border-stone-200 dark:border-stone-800'" 
+                                   class="border p-3 xs:p-4 rounded-xl cursor-pointer transition flex flex-col justify-between select-none min-w-0 box-border">
+                                <input type="radio" name="service_type" value="consult" x-model="service" class="sr-only">
+                                <span class="text-xs xs:text-sm font-semibold text-stone-900 dark:text-stone-50 block">Consultation</span>
+                                <span class="text-[10px] xs:text-[11px] font-normal text-stone-500 dark:text-stone-400 mt-1 block leading-relaxed">One-on-one troubleshooting analysis.</span>
+                            </label>
+                            <!-- Option C: Wholesale Channels -->
+                            <label :class="service === 'wholesale' ? 'border-amber-700 bg-amber-700/[0.02] dark:bg-amber-700/[0.04]' : 'border-stone-200 dark:border-stone-800'" 
+                                   class="border p-3 xs:p-4 rounded-xl cursor-pointer transition flex flex-col justify-between select-none min-w-0 box-border">
+                                <input type="radio" name="service_type" value="wholesale" x-model="service" class="sr-only">
+                                <span class="text-xs xs:text-sm font-semibold text-stone-900 dark:text-stone-50 block">Wholesale</span>
+                                <span class="text-[10px] xs:text-[11px] font-normal text-stone-500 dark:text-stone-400 mt-1 block leading-relaxed">Commercial metric sizing & logistics.</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Segment 2: Chronological Datetime Selectors -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+                        <div class="space-y-1.5 w-full">
+                            <label for="booking_date" class="text-[11px] xs:text-xs font-semibold text-stone-400 uppercase tracking-wider block">2. Target Date</label>
+                            <input id="booking_date" type="date" required 
+                                   class="w-full px-3 xs:px-4 py-2.5 xs:py-3 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 text-xs xs:text-sm font-normal rounded-xl focus:outline-none focus:border-amber-700 dark:focus:border-amber-700 transition box-border">
+                        </div>
+                        <div class="space-y-1.5 w-full">
+                            <label for="booking_time" class="text-[11px] xs:text-xs font-semibold text-stone-400 uppercase tracking-wider block">3. Preferred Time</label>
+                            <select id="booking_time" required
+                                    class="w-full px-3 xs:px-4 py-2.5 xs:py-3 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 text-xs xs:text-sm font-normal rounded-xl focus:outline-none focus:border-amber-700 dark:focus:border-amber-700 transition box-border">
+                                <option value="09:00">09:00 AM — Morning Batch</option>
+                                <option value="13:00">01:00 PM — Midday Mix</option>
+                                <option value="16:00">04:00 PM — Oven Deck Out</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Segment 3: User Details Ingestion -->
+                    <div class="space-y-4 w-full">
+                        <label class="text-[11px] xs:text-xs font-semibold text-stone-400 uppercase tracking-wider block border-t border-stone-100 dark:border-stone-800/60 pt-4">4. Contact Credentials</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+                            <div class="space-y-1.5 w-full">
+                                <label for="client_name" class="text-xs font-normal text-stone-600 dark:text-stone-400 block">Full Name</label>
+                                <input id="client_name" type="text" placeholder="Srinivas K A" required 
+                                       class="w-full px-3 xs:px-4 py-2.5 xs:py-3 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 text-xs xs:text-sm font-normal rounded-xl focus:outline-none focus:border-amber-700 dark:focus:border-amber-700 transition box-border">
+                            </div>
+                            <div class="space-y-1.5 w-full">
+                                <label for="client_email" class="text-xs font-normal text-stone-600 dark:text-stone-400 block">Email Address</label>
+                                <input id="client_email" type="email" placeholder="baker@domain.com" required 
+                                       class="w-full px-3 xs:px-4 py-2.5 xs:py-3 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 text-xs xs:text-sm font-normal rounded-xl focus:outline-none focus:border-amber-700 dark:focus:border-amber-700 transition box-border">
+                            </div>
+                        </div>
+                        <div class="space-y-1.5 w-full">
+                            <label for="client_notes" class="text-xs font-normal text-stone-600 dark:text-stone-400 block">Special Custom Request Notes</label>
+                            <textarea id="client_notes" rows="3" placeholder="Tell us about your sourdough hydration level or current bakery production output challenges..." 
+                                      class="w-full px-3 xs:px-4 py-2.5 xs:py-3 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 text-xs xs:text-sm font-normal rounded-xl focus:outline-none focus:border-amber-700 dark:focus:border-amber-700 transition resize-none box-border"></textarea>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- RIGHT COLUMN: Live Ledger Plan Summary (Spans 5 Columns) -->
+                <div class="grid grid-cols-1 lg:col-span-5 gap-4 w-full box-border">
+                    <div class="bg-stone-100 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 p-4 xs:p-6 rounded-2xl xs:rounded-3xl flex flex-col justify-between w-full box-border">
+                        <div>
+                            <h3 class="text-sm xs:text-base font-semibold text-stone-900 dark:text-stone-50 tracking-tight mb-4">Reservation Summary</h3>
+                            
+                            <div class="space-y-3 text-[11px] xs:text-xs font-normal divide-y divide-stone-200/60 dark:divide-stone-800/40">
+                                <div class="flex justify-between items-center py-2.5 gap-2">
+                                    <span class="text-stone-500 shrink-0">Service Selected</span>
+                                    <span class="font-semibold text-stone-900 dark:text-stone-50 capitalize truncate" x-text="service"></span>
+                                </div>
+                                <div class="flex justify-between items-center py-2.5 gap-2">
+                                    <span class="text-stone-500 shrink-0">Base Allocation Tier</span>
+                                    <span class="text-stone-900 dark:text-stone-100 font-medium text-right truncate">Artisan Ecosystem</span>
+                                </div>
+                                <div class="flex justify-between items-center py-2.5 gap-2">
+                                    <span class="text-stone-500 shrink-0">Administrative Fees</span>
+                                    <span class="text-amber-700 font-semibold text-right shrink-0">Calculated Next</span>
+                                </div>
+                            </div>
+
+                            <div class="bg-amber-700/5 border border-amber-700/10 rounded-xl p-3 xs:p-4 mt-5 text-[11px] xs:text-xs font-normal text-stone-600 dark:text-stone-400 leading-relaxed">
+                                <span class="font-semibold text-amber-700 block mb-0.5">Verification Rule:</span> 
+                                Once scheduled, confirmation metrics and digital guidelines drop directly into your inbox folder.
+                            </div>
+                        </div>
+
+                        <!-- Submit Execution Action Link Row -->
+                        <button type="submit" 
+                                class="w-full mt-6 xs:mt-8 px-4 xs:px-6 py-3.5 xs:py-4 bg-amber-700 hover:bg-amber-800 text-white font-semibold rounded-xl shadow-md hover:shadow-lg active:scale-95 transition text-xs xs:text-sm text-center select-none focus:outline-none box-border">
+                            Confirm Appointment Booking
+                        </button>
+                    </div>
+
+                    <!-- Real-Time Interactive Alpine Success Banner -->
+                    <div x-show="stepConfirm" 
+                         x-transition:enter="transition ease-out duration-300"
+                         x-transition:enter-start="opacity-0 translate-y-2"
+                         x-transition:enter-end="opacity-100 translate-y-0"
+                         class="p-4 bg-emerald-600/10 border border-emerald-600/20 text-emerald-700 dark:text-emerald-400 rounded-2xl text-[11px] xs:text-xs font-normal flex items-start gap-3 w-full box-border"
+                         x-cloak>
+                        <svg class="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        <div>
+                            <span class="font-semibold block mb-0.5">Appointment Request Logged!</span>
+                            We are processing your time parameters. Check your credentials folder inside 15 minutes.
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </main>
+
+    <!-- ========================================== -->
+    <!-- COMPACT BRAND COMPONENT FOOTER             -->
+    <!-- ========================================== -->
+    <footer class="py-6 border-t border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 transition-colors duration-300 w-full select-none">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-normal text-stone-400">
+            <span>&copy; 2026 Sourdough Ecosystem. All rights reserved.</span>
+            <div class="flex gap-4">
+                <a href="terms.html" class="hover:text-amber-700 transition">Terms of Service</a>
+                <a href="privacy.html" class="hover:text-amber-700 transition">Privacy Operations</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
