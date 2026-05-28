@@ -63,25 +63,25 @@
             </a>
 
             <!-- Utilities Toggle Controls Block -->
-            <div class="flex items-center gap-1 xs:gap-1.5 border-stone-200 dark:border-stone-800 ltr:border-l rtl:border-r ltr:pl-1.5 xs:ltr:pl-2.5 sm:ltr:pl-4 rtl:pr-1.5 xs:rtl:pr-2.5 sm:rtl:pr-4 select-none shrink-0 min-w-0">
+          <div class="flex items-center gap-1.5 sm:gap-2 border-stone-200 dark:border-stone-800 ltr:border-l rtl:border-r ltr:pl-1.5 sm:ltr:pl-4 rtl:pr-1.5 sm:rtl:pr-4 select-none shrink-0">
                 
-                <!-- Light / Dark Mode Toggle Button -->
-                <button @click="darkMode = !darkMode" 
-                        type="button" 
-                        class="p-1.5 sm:p-2 border border-stone-200 dark:border-stone-800 hover:border-amber-700 dark:hover:border-amber-700/60 text-stone-500 dark:text-stone-400 hover:text-amber-700 dark:hover:text-amber-700 rounded-lg transition active:scale-95 focus:outline-none shrink-0" 
-                        aria-label="Toggle Theme">
-                    <span class="text-xs sm:text-sm block leading-none" x-text="darkMode ? '☀️' : '🌙'"></span>
-                </button>
-                
-                <!-- LTR / RTL Direction Toggle Button -->
-                <button @click="isRTL = !isRTL" 
-                        type="button"
-                        class="px-1.5 py-1.5 xs:px-2 xs:py-1.5 sm:px-2.5 font-semibold border border-stone-200 dark:border-stone-800 hover:border-amber-700 dark:hover:border-amber-700/60 text-stone-600 dark:text-stone-400 hover:text-amber-700 dark:hover:text-amber-700 rounded-lg transition active:scale-95 text-[9px] xs:text-[10px] sm:text-xs tracking-wider focus:outline-none shrink-0"
-                        aria-label="Toggle Layout Direction">
-                    <span class="block leading-none" x-text="isRTL ? 'LTR' : 'RTL'"></span>
-                </button>
-                
-            </div>
+    <!-- Light / Dark Mode Toggle -->
+    <button @click="darkMode = !darkMode" 
+            type="button" 
+            class="w-9 h-9 flex items-center justify-center border border-stone-200 dark:border-stone-800 hover:border-amber-700 dark:hover:border-amber-700/60 text-stone-500 dark:text-stone-400 hover:text-amber-700 dark:hover:text-amber-700 rounded-lg transition active:scale-95 focus:outline-none shrink-0" 
+            aria-label="Toggle Theme">
+        <span class="text-sm block leading-none" x-text="darkMode ? '☀️' : '🌙'"></span>
+    </button>
+    
+    <!-- LTR / RTL Direction Toggle -->
+    <button @click="isRTL = !isRTL" 
+            type="button"
+            class="w-9 h-9 flex items-center justify-center font-semibold border border-stone-200 dark:border-stone-800 hover:border-amber-700 dark:hover:border-amber-700/60 text-stone-600 dark:text-stone-400 hover:text-amber-700 dark:hover:text-amber-700 rounded-lg transition active:scale-95 text-[10px] sm:text-xs tracking-wider focus:outline-none shrink-0"
+            aria-label="Toggle Layout Direction">
+        <span class="block leading-none" x-text="isRTL ? 'LTR' : 'RTL'"></span>
+    </button>
+    
+</div>
         </div>
     </nav>
 

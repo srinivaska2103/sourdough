@@ -121,13 +121,16 @@
         </div>
     </div>
 
-    <!-- Mobile Menu Drawer (Animated) -->
-    <div x-show="mobileMenu" 
-         x-transition:enter="transition ease-out duration-200"
-         x-transition:enter-start="opacity-0 -translate-y-4"
-         x-transition:enter-end="opacity-100 translate-y-0"
-         x-cloak 
-         class="lg:hidden bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 p-6 flex flex-col space-y-4 shadow-xl">
+<!-- Mobile Menu Drawer (Animated) -->
+<div x-show="mobileMenu" 
+     x-transition:enter="transition ease-out duration-200"
+     x-transition:enter-start="opacity-0 -translate-y-4"
+     x-transition:enter-end="opacity-100 translate-y-0"
+     x-transition:leave="transition ease-in duration-200"
+     x-transition:leave-start="opacity-100 translate-y-0"
+     x-transition:leave-end="opacity-0 -translate-y-4"
+     x-cloak 
+     class="absolute left-0 w-full lg:hidden bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 p-6 flex flex-col space-y-4 shadow-xl z-40">
         
         <template x-for="link in [{n:'Home',u:'index.html'},{n:'Home 2',u:'home2.html'},{n:'About',u:'abouts.html'},{n:'Services',u:'services.html'},{n:'Contact',u:'contact.html'}]">
             <a :href="link.u" 
@@ -155,7 +158,6 @@
         </div>
     </div>
 </nav>
-
 <script>
     // Execute immediately before the page renders to avoid white flashes
     if (localStorage.getItem('dark') === 'true' || (!('dark' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -165,7 +167,7 @@
     }
 </script>
 
-<section class="relative min-h-[calc(100vh-4rem)] flex items-center bg-stone-50 dark:bg-stone-950 transition-colors duration-300 py-8 md:py-16 px-3 xs:px-4 sm:px-6 lg:px-8 overflow-hidden w-full box-border"
+<section class="relative min-h-[80vh] flex items-center justify-center bg-stone-900 transition-colors duration-300 py-16 px-4 overflow-hidden w-full box-border"
          x-data="{ 
              activeHeadline: 0,
              headlines: [
@@ -173,70 +175,56 @@
                  'Slow Bread for Modern Bakers',
                  'Discover the Art of Artisan Baking',
                  'Handcrafted Bread Starts Here'
-             ],
-             init() {
-                 setInterval(() => {
-                     this.activeHeadline = (this.activeHeadline + 1) % this.headlines.length;
-                 }, 4500);
-             }
-         }">
+             ]
+         }"
+         x-init="setInterval(() => { activeHeadline = (activeHeadline + 1) % headlines.length }, 4500)">
     
-    <div class="absolute top-1/2 left-1/4 -translate-y-1/2 w-[90%] max-w-[600px] h-[500px] bg-amber-700/[0.03] dark:bg-amber-700/[0.05] blur-[120px] pointer-events-none rounded-full z-0"></div>
+    <!-- Background Image -->
+    <div class="absolute inset-0 z-0">
+        <img src="assets/hero2" alt="Artisan bread" class="w-full h-full object-cover">
+        <!-- Dark Overlay -->
+        <div class="absolute inset-0 bg-black/60 dark:bg-black/70"></div>
+    </div>
 
-    <div class="max-w-7xl mx-auto w-full box-border relative z-10">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center w-full box-border">
-            
-            <div class="grid grid-cols-1 lg:col-span-7 text-center ltr:lg:text-left rtl:lg:text-right flex flex-col justify-center w-full box-border">
-                
-                <div class="mb-4">
-                    <span class="inline-flex items-center px-3 py-1 text-xs font-semibold uppercase tracking-widest text-amber-700 bg-amber-700/10 dark:bg-amber-700/20 rounded-full select-none">
-                        Est. 2026 / Slow Craft
-                    </span>
-                </div>
-                
-                <div class="h-28 xs:h-24 sm:h-28 md:h-36 lg:h-32 flex items-center justify-center ltr:lg:justify-start rtl:lg:justify-start relative mb-4 sm:mb-6 w-full box-border">
-                    <template x-for="(headline, index) in headlines" :key="index">
-                        <h1 x-show="activeHeadline === index"
-                            x-transition:enter="transition ease-out duration-500 absolute"
-                            x-transition:enter-start="opacity-0 translate-y-4"
-                            x-transition:enter-end="opacity-100 translate-y-0"
-                            x-transition:leave="transition ease-in duration-400 absolute"
-                            x-transition:leave-start="opacity-100 translate-y-0"
-                            x-transition:leave-end="opacity-0 -translate-y-4"
-                            class="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-semibold tracking-tight text-stone-900 dark:text-stone-50 leading-tight w-full box-border">
-                            <span x-text="headline"></span>
-                        </h1>
-                    </template>
-                </div>
-                
-                <p class="text-xs xs:text-sm sm:text-base font-normal text-stone-500 dark:text-stone-400 max-w-xl mx-auto ltr:lg:mx-0 rtl:lg:mx-0 leading-relaxed mb-8 sm:mb-10 box-border">
-                    Premium sourdough starters, artisan baking tools, and educational experiences designed for passionate bakers.
-                </p>
+    <!-- Content Container -->
+    <div class="max-w-4xl mx-auto w-full relative z-10 text-center flex flex-col items-center">
+        
+        <!-- Label -->
+        <div class="mb-6">
+            <span class="inline-flex items-center px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-white bg-amber-700/80 rounded-full backdrop-blur-sm">
+                Est. 2026 / Slow Craft
+            </span>
+        </div>
+        
+        <!-- Animated Headline -->
+        <div class="h-32 sm:h-40 flex items-center justify-center relative mb-6 w-full">
+            <template x-for="(headline, index) in headlines" :key="index">
+                <h1 x-show="activeHeadline === index"
+                    x-transition:enter="transition ease-out duration-700 absolute"
+                    x-transition:enter-start="opacity-0 translate-y-4"
+                    x-transition:enter-end="opacity-100 translate-y-0"
+                    x-transition:leave="transition ease-in duration-400 absolute"
+                    x-transition:leave-start="opacity-100 translate-y-0"
+                    x-transition:leave-end="opacity-0 -translate-y-4"
+                    class="text-3xl sm:text-5xl md:text-6xl font-bold text-white tracking-tight leading-tight w-full">
+                    <span x-text="headline"></span>
+                </h1>
+            </template>
+        </div>
+        
+        <!-- Description -->
+        <p class="text-sm sm:text-base text-stone-200 max-w-xl mx-auto leading-relaxed mb-10">
+            Premium sourdough starters, artisan baking tools, and educational experiences designed for passionate bakers.
+        </p>
 
-                <div class="flex flex-col sm:flex-row gap-3 justify-center ltr:lg:justify-start rtl:lg:justify-start items-center max-w-xs sm:max-w-none mx-auto ltr:lg:mx-0 rtl:lg:mx-0 select-none w-full box-border">
-                    <a href="gallery.html" 
-                       class="w-full sm:w-auto px-7 py-3.5 bg-amber-700 hover:bg-amber-800 text-white font-semibold rounded-xl active:scale-95 transition-all duration-200 shadow-md hover:shadow-lg text-xs xs:text-sm text-center whitespace-nowrap box-border">
-                        Explore Collections
-                    </a>
-                    
-                    <a href="abouts.html" 
-                       class="w-full sm:w-auto px-7 py-3.5 border border-stone-300 dark:border-stone-700 hover:border-amber-700 dark:hover:border-amber-700 text-stone-700 dark:text-stone-300 hover:text-amber-700 dark:hover:text-amber-700 font-medium rounded-xl hover:bg-white dark:hover:bg-stone-900 active:scale-95 transition-all duration-200 text-xs xs:text-sm text-center whitespace-nowrap box-border">
-                        Learn Sourdough
-                    </a>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:col-span-5 w-full max-w-md lg:max-w-none mx-auto box-border">
-                <div class="relative rounded-2xl xs:rounded-3xl overflow-hidden border border-stone-200 dark:border-stone-800 shadow-xl aspect-[4/3] sm:aspect-[16/10] lg:aspect-[5/6] bg-stone-100 dark:bg-stone-900 group select-none w-full box-border">
-                    <div class="absolute inset-0 bg-amber-700/5 mix-blend-overlay z-10 pointer-events-none transition group-hover:opacity-0 duration-300"></div>
-                    
-                    <img src="assets/hero2" 
-                         alt="Premium slow fermentation artisan sourdough bread loaf processing" 
-                         loading="lazy"
-                         class="w-full h-full object-cover transform group-hover:scale-[1.02] transition-transform duration-700 ease-out">
-                </div>
-            </div>
-
+        <!-- Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center w-full">
+            <a href="gallery.html" class="w-full sm:w-auto px-8 py-4 bg-amber-700 hover:bg-amber-800 text-white font-semibold rounded-xl shadow-lg transition-all active:scale-95 text-sm uppercase tracking-wider">
+                Explore Collections
+            </a>
+            <a href="abouts.html" class="w-full sm:w-auto px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white font-medium rounded-xl transition-all active:scale-95 text-sm uppercase tracking-wider">
+                Learn Sourdough
+            </a>
         </div>
     </div>
 </section>
@@ -248,9 +236,9 @@
         <div class="mb-10 md:mb-16 max-w-xl ltr:text-left rtl:text-right">
             <span class="text-xs font-semibold uppercase tracking-widest text-amber-700 block mb-2">Ecosystem Supplies</span>
             <h2 class="text-2xl xs:text-3xl font-semibold tracking-tight text-stone-900 dark:text-stone-50 leading-tight">Explore Product Categories</h2>
-            <p class="text-xs xs:text-sm font-normal text-stone-500 dark:text-stone-400 mt-2 leading-relaxed">
-                Equip your home baking space with professional trace-monitored biological cultures, premium hardware assets, and direct educational guides.
-            </p>
+          <p class="text-sm xs:text-base font-normal text-stone-500 dark:text-stone-400 mt-2 leading-relaxed">
+    Equip your home baking space with professional trace-monitored biological cultures, premium hardware assets, and direct educational guides.
+</p>
         </div>
 
         <!-- Master Responsive Interactive Categories Grid (Stacks on mobile, 2 cols on tablet, 3 cols on desktop) -->
@@ -791,125 +779,88 @@
     </div>
 </section>
 <!-- Premium Final CTA Banner Section -->
-<section class="py-16 md:py-24 bg-stone-50 dark:bg-stone-950 transition-colors duration-300 overflow-hidden w-full box-border"
-         x-data="{ 
-             activeHeadline: 0,
-             headlines: [
-                 'Start Baking Better Bread Today',
-                 'Bring Artisan Baking Home',
-                 'Join the Sourdough Movement'
-             ],
-             init() {
-                 setInterval(() => {
-                     this.activeHeadline = (this.activeHeadline + 1) % this.headlines.length;
-                 }, 4000);
-             }
-         }">
-    
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center w-full box-border">
+<section class="py-24 md:py-32 bg-stone-50 dark:bg-stone-950 transition-colors duration-500 w-full box-border relative">
+
+    <!-- Decorative Subtle Background Element -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-amber-700/5 blur-[120px] rounded-3xl pointer-events-none"></div>
+
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 text-center relative z-10">
         
-        <!-- Animated Headline Window (Height-locked to prevent layout shift) -->
-        <div class="h-24 xs:h-28 md:h-32 flex items-center justify-center relative mb-8 w-full box-border">
-            <template x-for="(headline, index) in headlines" :key="index">
-                <h2 x-show="activeHeadline === index"
-                    x-transition:enter="transition ease-out duration-500 absolute"
-                    x-transition:enter-start="opacity-0 translate-y-3"
-                    x-transition:enter-end="opacity-100 translate-y-0"
-                    x-transition:leave="transition ease-in duration-400 absolute"
-                    x-transition:leave-start="opacity-100 translate-y-0"
-                    x-transition:leave-end="opacity-0 -translate-y-3"
-                    class="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-semibold text-stone-900 dark:text-stone-50 tracking-tight leading-tight w-full box-border">
-                    <span x-text="headline"></span>
-                </h2>
-            </template>
+        <!-- Static Headline -->
+        <div class="mb-10 w-full">
+            <h2 class="text-4xl sm:text-6xl font-bold text-stone-900 dark:text-stone-50 tracking-tighter leading-[1.1]">
+                Bring Artisan Baking Home
+            </h2>
         </div>
         
-        <!-- Supporting Narrative Text -->
-        <p class="text-xs xs:text-sm sm:text-base font-normal text-stone-500 dark:text-stone-400 max-w-lg mx-auto leading-relaxed mb-10 sm:mb-12 box-border">
-            Equip your kitchen with professional-grade tools, active biological starters, and comprehensive training to master the crust.
+        <!-- Refined Narrative Text -->
+        <p class="text-stone-600 dark:text-stone-400 text-lg md:text-xl font-light mb-12 max-w-lg mx-auto leading-relaxed">
+            Master the art of slow-fermentation with our professional toolkit and expert-led curriculum.
         </p>
 
-        <!-- Responsive Action Button Array -->
-        <div class="flex flex-col xs:flex-row gap-3 justify-center items-center max-w-xs xs:max-w-none mx-auto w-full box-border">
-            <!-- Primary Action -->
+        <!-- Redesigned Button Cluster -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center w-full">
             <a href="login.html" 
-               class="w-full xs:w-auto px-8 py-4 bg-amber-700 hover:bg-amber-800 text-white font-semibold rounded-xl active:scale-95 transition-all duration-200 shadow-md hover:shadow-lg text-xs xs:text-sm text-center whitespace-nowrap box-border">
-                Join Now
+               class="w-full sm:w-auto px-10 py-4 bg-stone-900 dark:bg-stone-50 text-stone-50 dark:text-stone-900 font-medium rounded-2xl hover:bg-amber-700 dark:hover:bg-amber-700 hover:text-white transition-all duration-300 shadow-lg active:scale-95 text-sm uppercase tracking-[0.15em]">
+                Join Membership
             </a>
-            
-            <!-- Secondary Action -->
             <a href="booknow.html" 
-               class="w-full xs:w-auto px-8 py-4 border border-stone-300 dark:border-stone-700 hover:border-amber-700 dark:hover:border-amber-700 text-stone-700 dark:text-stone-300 hover:text-amber-700 dark:hover:text-amber-700 font-medium rounded-xl hover:bg-stone-100 dark:hover:bg-stone-900 active:scale-95 transition-all duration-200 text-xs xs:text-sm text-center whitespace-nowrap box-border">
-                Book a Workshop
+               class="w-full sm:w-auto px-10 py-4 border-2 border-stone-900 dark:border-stone-50 text-stone-900 dark:text-stone-50 font-medium rounded-2xl hover:bg-stone-900 dark:hover:bg-stone-50 hover:text-stone-50 dark:hover:text-stone-900 transition-all duration-300 active:scale-95 text-sm uppercase tracking-[0.15em]">
+                Explore Workshops
             </a>
         </div>
-
     </div>
 </section>
-   <footer class="border-t border-stone-200 dark:border-stone-800 mt-20 py-12 bg-stone-50 dark:bg-stone-950">
-    <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-4 gap-12">
+ <footer class="border-t border-stone-200 dark:border-stone-800 mt-20 py-12 bg-stone-50 dark:bg-stone-950">
+    <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
         
-        <!-- Branding & Socials -->
-        <div class="space-y-4">
-         <a href="index.html" class="flex items-center gap-2 group">
-    <!-- Logo Box -->
-    <div class="w-8 h-8 bg-amber-700 text-white flex items-center justify-center rounded-lg group-hover:scale-105 transition-transform duration-300">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 2C8.686 2 6 4.686 6 8c0 1.93.89 3.65 2.29 4.77C7.38 13.9 6.7 15.2 6.7 16.6c0 2.98 2.42 5.4 5.4 5.4s5.4-2.42 5.4-5.4c0-1.4-.68-2.7-1.59-3.83C17.11 11.65 18 9.93 18 8c0-3.314-2.686-6-6-6z"/>
-        </svg>
-    </div>
-    
-    <!-- Name -->
-    <span class="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-50 group-hover:text-amber-700 transition-colors">Sourdough</span>
-</a>
-            
-            <!-- Real World Social Icons -->
-          <div class="flex gap-4">
-    <!-- Instagram -->
-    <a href="#" class="text-stone-500 hover:text-pink-600 transition-colors duration-300">
-        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.77 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-        </svg>
-    </a>
+        <!-- Branding, Socials, and Description Column -->
+        <div class="space-y-6 w-full">
+            <a href="index.html" class="flex items-center gap-3 group w-full">
+                <div class="w-10 h-10 bg-amber-700 text-white flex items-center justify-center rounded-xl shadow-lg shadow-amber-700/20 group-hover:scale-105 transition-all duration-300 shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2C8.686 2 6 4.686 6 8c0 1.93.89 3.65 2.29 4.77C7.38 13.9 6.7 15.2 6.7 16.6c0 2.98 2.42 5.4 5.4 5.4s5.4-2.42 5.4-5.4c0-1.4-.68-2.7-1.59-3.83C17.11 11.65 18 9.93 18 8c0-3.314-2.686-6-6-6z"/>
+                    </svg>
+                </div>
+                <div class="flex flex-col justify-center">
+                    <span class="text-xl font-bold tracking-tight text-stone-900 dark:text-stone-50 group-hover:text-amber-700 transition-colors duration-300">Sourdough</span>
+                    <span class="text-[10px] uppercase tracking-widest text-stone-500 dark:text-stone-400 font-medium">Artisan Baking Studio</span>
+                </div>
+            </a>
 
-    <!-- Twitter/X -->
-    <a href="#" class="text-stone-500 hover:text-blue-600 transition-colors duration-300">
-        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
-        </svg>
-    </a>
+            <div class="flex gap-4">
+                <a href="#" class="text-stone-500 hover:text-pink-600 transition-colors duration-300"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.77 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+                <a href="#" class="text-stone-500 hover:text-blue-600 transition-colors duration-300"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg></a>
+                <a href="#" class="text-stone-500 hover:text-blue-800 transition-colors duration-300"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+            </div>
 
-    <!-- Facebook -->
-    <a href="#" class="text-stone-500 hover:text-blue-800 transition-colors duration-300">
-        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-        </svg>
-    </a>
-</div>
+            <p class="text-sm text-stone-500 dark:text-stone-400 max-w-xs leading-relaxed">
+                Dedicated to reviving the craft of slow-fermented, stone-milled heritage grains for the modern kitchen.
+            </p>
         </div>
 
-        <!-- Column 1: Quick Links -->
-        <div>
-            <h3 class="font-semibold mb-4 text-stone-900 dark:text-white">Quick Links</h3>
-            <ul class="space-y-2 text-sm text-stone-600 dark:text-stone-400">
-                <li><a href="index.html" class="hover:text-amber-700 transition">Home</a></li>
-                <li><a href="home2.html" class="hover:text-amber-700 transition">Home 2</a></li>
-                <li><a href="abouts.html" class="hover:text-amber-700 transition">About Us</a></li>
-                <li><a href="services.html" class="hover:text-amber-700 transition">Services</a></li>
-                <li><a href="contact.html" class="hover:text-amber-700 transition">Contact</a></li>
-            </ul>
-        </div>
-
-        <!-- Column 2: Navigation -->
-        <div>
-            <h3 class="font-semibold mb-4 text-stone-900 dark:text-white">Navigation</h3>
-            <ul class="space-y-2 text-sm text-stone-600 dark:text-stone-400">
-                <li><a href="booknow.html" class="hover:text-amber-700 transition">Book Now</a></li>
-                <li><a href="pricing.html" class="hover:text-amber-700 transition">Pricing</a></li>
-                <li><a href="gallery.html" class="hover:text-amber-700 transition">Gallery</a></li>
-                <li><a href="404.html" class="hover:text-amber-700 transition">404 Page</a></li>
-                <li><a href="comingsoon.html" class="hover:text-amber-700 transition">Coming Soon</a></li>
-            </ul>
+        <!-- Links Columns -->
+        <div class="grid grid-cols-2 gap-12 sm:col-span-1 lg:col-span-2">
+            <div>
+                <h3 class="font-semibold mb-4 text-stone-900 dark:text-white">Quick Links</h3>
+                <ul class="space-y-2 text-sm text-stone-600 dark:text-stone-400">
+                    <li><a href="index.html" class="hover:text-amber-700 transition">Home</a></li>
+                    <li><a href="home2.html" class="hover:text-amber-700 transition">Home 2</a></li>
+                    <li><a href="abouts.html" class="hover:text-amber-700 transition">About Us</a></li>
+                    <li><a href="services.html" class="hover:text-amber-700 transition">Services</a></li>
+                    <li><a href="contact.html" class="hover:text-amber-700 transition">Contact</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="font-semibold mb-4 text-stone-900 dark:text-white">Navigation</h3>
+                <ul class="space-y-2 text-sm text-stone-600 dark:text-stone-400">
+                    <li><a href="booknow.html" class="hover:text-amber-700 transition">Book Now</a></li>
+                    <li><a href="pricing.html" class="hover:text-amber-700 transition">Pricing</a></li>
+                    <li><a href="gallery.html" class="hover:text-amber-700 transition">Gallery</a></li>
+                    <li><a href="404.html" class="hover:text-amber-700 transition">404 Page</a></li>
+                    <li><a href="comingsoon.html" class="hover:text-amber-700 transition">Coming Soon</a></li>
+                </ul>
+            </div>
         </div>
 
         <!-- Newsletter -->
